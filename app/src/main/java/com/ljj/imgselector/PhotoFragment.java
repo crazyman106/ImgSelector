@@ -121,7 +121,7 @@ public class PhotoFragment extends Fragment {
             }
         });
 
-        setOkTxt(((MainActivity) getActivity()).curGalleryMode);
+        setOkTxt(((ImgSelectorActivity) getActivity()).curGalleryMode);
         if (mSelectImages.contains(images.get(position))) {
             selector.setCompoundDrawables(selectedDrawable, null, null, null);
         }
@@ -150,7 +150,7 @@ public class PhotoFragment extends Fragment {
         selector.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (((MainActivity) getActivity()).curGalleryMode) {
+                switch (((ImgSelectorActivity) getActivity()).curGalleryMode) {
                     case Constants.MULTIPLE:
                         if (mSelectImages.contains(curImage)) {
                             mSelectImages.remove(curImage);
@@ -177,7 +177,7 @@ public class PhotoFragment extends Fragment {
                     default:
                 }
 
-                setOkTxt(((MainActivity) getActivity()).curGalleryMode);
+                setOkTxt(((ImgSelectorActivity) getActivity()).curGalleryMode);
             }
         });
         okNums.setOnClickListener(new View.OnClickListener() {
@@ -191,7 +191,7 @@ public class PhotoFragment extends Fragment {
         rootView.findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).onBackPressed();
+                ((ImgSelectorActivity)getActivity()).onBackPressed();
             }
         });
     }

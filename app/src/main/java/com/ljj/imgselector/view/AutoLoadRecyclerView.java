@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide;
 
 /**
  * @author lijunjie on 2017/11/28 0028.
- * @description 在recyclerview滑动时不加载图片, 在华东
+ * @description recyclerview滑动时不加载图片,停止滑动时加载图片
  */
 
 public class AutoLoadRecyclerView extends RecyclerView {
@@ -44,8 +44,7 @@ public class AutoLoadRecyclerView extends RecyclerView {
         //当屏幕停止滚动时为0；当屏幕滚动且用户使用的触碰或手指还在屏幕上时为1；由于用户的操作，屏幕产生惯性滑动时为2
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            Log.e("onScrolledStateChanged", newState + "--");
-            //根据newState状态做处理
+            //根据recyclerview滑动的状态做处理
             switch (newState) {
                 case SCROLL_STATE_IDLE:
                     // The RecyclerView is not currently scrolling.

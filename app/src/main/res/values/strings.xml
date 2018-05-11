@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">ImgSelector</string>
+    <string name="crop_image_activity_title">反向旋转</string>
+    <string name="crop_image_menu_rotate_left">反向旋转</string>
+    <string name="crop_image_menu_rotate_right">旋转</string>
+    <string name="crop_image_menu_crop">剪切</string>
+    <string name="crop_image_menu_flip">Flip</string>
+    <string name="crop_image_menu_flip_horizontally">水平</string>
+    <string name="crop_image_menu_flip_vertically">垂直</string>
+    <string name="pick_image_intent_chooser_title">选择文件</string>
+    <string name="crop_image_activity_no_permissions">取消中,所需的权限没有被授权</string>
+
 </resources>

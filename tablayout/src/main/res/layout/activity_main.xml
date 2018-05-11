@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/rich_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="#44f54548"
+        android:gravity="center_vertical"
+        android:paddingBottom="3dp"
+        android:paddingTop="3dp"
+        android:visibility="gone"
+        android:text=""
+        android:textColor="#fe9b00"
+        android:textSize="13sp" />
+</RelativeLayout>

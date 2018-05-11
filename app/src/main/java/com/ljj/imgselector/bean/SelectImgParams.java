@@ -2,6 +2,7 @@ package com.ljj.imgselector.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.ljj.imgselector.utils.Constants;
 
 /**
  * @author lijunjie on 2017/11/28 0028.
@@ -10,10 +11,20 @@ import android.os.Parcelable;
 
 public class SelectImgParams implements Parcelable {
 
+    /**
+     * 图片选择模式:单选,多选
+     * @see Constants
+     */
     private int galleryMode;
-
+    /**
+     * 是否选择照片:单选,多选
+     * @see Constants
+     */
     private int camearMode;
-
+    /**
+     * 是否裁剪:单选,多选
+     * @see Constants
+     */
     private int cropMode;
 
     private String imageFolderPath;

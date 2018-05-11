@@ -45,8 +45,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity {
-
+public class ImgSelectorActivity extends FragmentActivity {
     AutoLoadRecyclerView recyclerImgs, recyclerFolders;
     ImageView back;
     TextView okNums, folderName, preview;
@@ -54,24 +53,47 @@ public class MainActivity extends FragmentActivity {
     ImagesAdapter imagesAdapter;
     FolderAdapter folderAdapter;
     View folderViewBg;
+    /**
+     * 当前是照片列表还是文件夹列表
+     */
     private boolean folderIsOpening = false;
+
     FrameLayout fragmentContainer;
+    /**
+     * 显示选中图片
+     */
     PhotoFragment photoFragment;
     LinearLayout topView;
+    /**
+     * 选中的图片
+     */
     List<Image> selectImages;
+    /**当前选择图片参数*/
     SelectImgParams selectImgParams;
-    private String imageFolderPath;
+    /**
+     * 拍照文件夹路径
+     */
+    private String takeImgFolderPath;
 
     public int curGalleryMode = Constants.MULTIPLE;
     public int curCropMode = -1, curTakeCamera = Constants.TAKE_CAMERA;
 
 
+    /**
+     * 选择图片
+     *
+     * @param activity
+     * @param params      图片选择参数()
+     * @param requestCode
+     */
     public static void startActivityForResult(Activity activity, SelectImgParams params, int requestCode) {
-        if (TextUtils.isEmpty(params.getImageFolderPath())) {
-            Toast.makeText(activity, "请设置图片路径", Toast.LENGTH_SHORT).show();
-            return;
+        if (params.getCamearMode() == Constants.TAKE_CAMERA) {
+            if (TextUtils.isEmpty(params.getImageFolderPath())) {
+                Toast.makeText(activity, "请设置图片路径", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
-        Intent intent = new Intent(activity, MainActivity.class);
+        Intent intent = new Intent(activity, ImgSelectorActivity.class);
         intent.putExtra(Constants.CHOOSE_MODE, params);
         activity.startActivityForResult(intent, requestCode);
     }
@@ -103,14 +125,14 @@ public class MainActivity extends FragmentActivity {
         folderName = findViewById(R.id.tv_folder_name);
         preview = findViewById(R.id.preview);
         //fengzi/image
-        imageFolderPath = Environment.getExternalStorageDirectory().getPath() + File.separator + "fengzi/image";
-        Log.e("imageFolderPath", imageFolderPath);
+        takeImgFolderPath = Environment.getExternalStorageDirectory().getPath() + File.separator + "fengzi/image";
+        Log.e("takeImgFolderPath", takeImgFolderPath);
         selectImgParams = getIntent().getParcelableExtra(Constants.CHOOSE_MODE);
         if (selectImgParams != null) {
             curGalleryMode = selectImgParams.getGalleryMode();
             curCropMode = selectImgParams.getCropMode();
             curTakeCamera = selectImgParams.getCamearMode();
-            imageFolderPath = selectImgParams.getImageFolderPath();
+            takeImgFolderPath = selectImgParams.getImageFolderPath();
         }
         loadImageForSDCard();
         // 选择图片文件夹
@@ -154,7 +176,6 @@ public class MainActivity extends FragmentActivity {
         layoutParams.topMargin = getStatusBarHeight(this);
         topView.setLayoutParams(layoutParams);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-
         selectImages = new ArrayList<>();
         recyclerFolders.post(new Runnable() {
             @Override
@@ -331,21 +352,6 @@ public class MainActivity extends FragmentActivity {
         folderIsOpening = true;
     }
 
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK && photoFragment != null && !photoFragment.isHidden()) {
-//            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-//            getSupportFragmentManager().beginTransaction().hide(photoFragment).commit();
-//            fragmentContainer.setVisibility(View.GONE);
-//            return true;
-//        }
-//        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN && folderIsOpening) {
-//            closeFolder();
-//            return true;
-//        }
-//        return super.onKeyDown(keyCode, event);
-//    }
-
     @Override
     public void onBackPressed() {
         if (photoFragment != null && !photoFragment.isHidden()) {
@@ -356,6 +362,7 @@ public class MainActivity extends FragmentActivity {
         }
         if (folderIsOpening) {
             closeFolder();
+            return;
         }
         super.onBackPressed();
     }
@@ -398,11 +405,11 @@ public class MainActivity extends FragmentActivity {
     private void takeCamera() {
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            File file = new File(imageFolderPath);
+            File file = new File(takeImgFolderPath);
             if (!file.exists()) {
                 file.mkdirs();
             }
-            tempFile = new File(imageFolderPath, System.currentTimeMillis() + ".png");
+            tempFile = new File(takeImgFolderPath, System.currentTimeMillis() + ".png");
             int currentapiVersion = android.os.Build.VERSION.SDK_INT;
             // 在Android7.0+上和7.0以下的区别
             if (currentapiVersion < 24) {
@@ -410,7 +417,7 @@ public class MainActivity extends FragmentActivity {
                 startActivityForResult(intent, Constants.PHOTO_REQUEST_CAMERA);
             } else {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(MainActivity.this, BuildConfig.APPLICATION_ID
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(ImgSelectorActivity.this, BuildConfig.APPLICATION_ID
                         + ".imagefileprovider", tempFile));
                 startActivityForResult(intent, Constants.PHOTO_REQUEST_CAMERA);
             }
