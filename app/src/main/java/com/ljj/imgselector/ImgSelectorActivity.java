@@ -68,15 +68,17 @@ public class ImgSelectorActivity extends FragmentActivity {
      * 选中的图片
      */
     List<Image> selectImages;
-    /**当前选择图片参数*/
+    /**
+     * 当前选择图片参数
+     */
     SelectImgParams selectImgParams;
     /**
      * 拍照文件夹路径
      */
     private String takeImgFolderPath;
 
-    public int curGalleryMode = Constants.MULTIPLE;
-    public int curCropMode = -1, curTakeCamera = Constants.TAKE_CAMERA;
+    public int curGalleryMode = Constants.SINGLE;
+    public int curCropMode = Constants.NO_CROP, curTakeCamera = Constants.NO_CAMERA;
 
 
     /**
@@ -102,7 +104,7 @@ public class ImgSelectorActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.photo_view_activity_main);
         setStatusBarColor();
         folderViewBg = findViewById(R.id.folders_bg);
         recyclerImgs = findViewById(R.id.imageviews);

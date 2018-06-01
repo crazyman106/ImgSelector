@@ -1,1 +1,1 @@
-include ':app', ':tablayout', ':footmark'
+include ':app', ':tablayout', ':footmark', ':sharedemo'

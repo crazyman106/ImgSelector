@@ -1,8 +1,5 @@
 package com.fengzi.footmark.test1;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,10 +12,8 @@ import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
-import android.view.animation.AnimationSet;
 import android.widget.TextView;
 
 import com.fengzi.footmark.R;
@@ -28,7 +23,7 @@ import com.fengzi.footmark.R;
  * @description
  */
 
-public class RichTextView extends TextView {
+public class RichTextView1 extends TextView {
     public static final float MAX_SCALE_SIZE = 10;//3.2f;
     public static final float MIN_SCALE_SIZE = 0;//0.6f;
     private Bitmap mControllerBitmap, mDeleteBitmap;
@@ -51,15 +46,15 @@ public class RichTextView extends TextView {
     private float mStickerScaleSize = 1.0f;
 
 
-    public RichTextView(Context context) {
+    public RichTextView1(Context context) {
         this(context, null);
     }
 
-    public RichTextView(Context context, @Nullable AttributeSet attrs) {
+    public RichTextView1(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public RichTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public RichTextView1(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -155,25 +150,21 @@ public class RichTextView extends TextView {
 
     private boolean isMove;
     private float curScale;
-    float x=0;
-    float y=0;
-    float a = 5;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (mViewRect == null) {
             mViewRect = new RectF(0, 0, getMeasuredWidth(), getMeasuredHeight());
         }
-
+        float x = event.getX();
+        float y = event.getY();
         int action = event.getActionMasked();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                x = event.getX();
-                y = event.getY();
                 if (isInController(x, y)) {
                     mInController = true;
                     mLastPointX = x;
                     mLastPointY = y;
-//                    Log.e("RICH_TEXT","mLastPointX:"+mLastPointX+"mLastPointY:"+mLastPointY);
                     midPointToStartPoint(x, y);
                 } else if (isInDelete(x, y)) {
                     mInDelete = true;
@@ -181,7 +172,6 @@ public class RichTextView extends TextView {
                     setShowDrawController(true);
                     mLastPointY = y;
                     mLastPointX = x;
-//                    Log.e("RICH_TEXT","mLastPointX:"+mLastPointX+"mLastPointY:"+mLastPointY);
                     mInMove = true;
                     isMove = false;
                 } else {
@@ -193,7 +183,6 @@ public class RichTextView extends TextView {
                 if (mInController) { // 按住按钮旋转,缩放
 //                    mMatrix.postRotate(rotation(event), t2sMiddle.x, t2sMiddle.y);
                     this.setRotation(rotation(event));
-                    Log.e("Rotation",rotation(event)+"");
                     float nowLength = caculateLength(mPoints[4], mPoints[5]);
                     float touchLength = caculateLength(event.getX(), event.getY());
                     if ((float) Math.sqrt((nowLength - touchLength) * (nowLength - touchLength)) > 0.0f) {
@@ -220,15 +209,10 @@ public class RichTextView extends TextView {
                     } else {
                         isMove = true;
                     }
-                    setTranslationX(-cX);
-                    setTranslationY(-cX);
-                    Log.e("RICH_TEXT","X:"+x+"Y:"+y);
-//                    Log.e("RICH_TEXT","cX:"+cX+"cX:"+cX);
-//                    Log.e("RICH_TEXT","mLastPointX:"+mLastPointX+"mLastPointY:"+mLastPointY);
 //                    mMatrix.postTranslate(cX, cY);
                     postInvalidate();
-                    mLastPointX = event.getX();
-                    mLastPointY = event.getY();
+                    mLastPointX = x;
+                    mLastPointY = y;
                     break;
                 }
                 break;

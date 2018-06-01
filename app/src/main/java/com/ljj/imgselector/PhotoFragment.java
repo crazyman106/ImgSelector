@@ -47,7 +47,7 @@ public class PhotoFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_select_img, container, false);
+        rootView = LayoutInflater.from(getContext()).inflate(R.layout.photo_view_fragment_select_img, container, false);
         topView = rootView.findViewById(R.id.top);
         bottomView = rootView.findViewById(R.id.bottom);
         curPage = rootView.findViewById(R.id.photoview_curpage);
