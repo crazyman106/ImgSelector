@@ -1,8 +1,18 @@
-package com.example.administrator.sharedemo;
+package com.example.administrator.recyclerview;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
+import android.support.v7.widget.OrientationHelper;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+
+/**
+ * @author lijunjie on 2018/6/4 0004.
+ * @description
+ */
 
 public class MySnapHelper extends LinearSnapHelper {
 
@@ -20,6 +30,7 @@ public class MySnapHelper extends LinearSnapHelper {
     @Nullable
     private OrientationHelper mHorizontalHelper;
 
+
     public MySnapHelper(int type) {
         this.type = type;
     }
@@ -35,6 +46,52 @@ public class MySnapHelper extends LinearSnapHelper {
         }
     }
 
+    private int[] calculateDisOnStart(@NonNull RecyclerView.LayoutManager layoutManager, @NonNull View targetView) {
+        int[] out = new int[2];
+        if (layoutManager.canScrollHorizontally()) {
+            out[0] = distanceToStart(layoutManager, targetView,
+                    getmHorizontalHelper(layoutManager));
+        } else {
+            out[0] = 0;
+        }
+
+        if (layoutManager.canScrollVertically()) {
+            out[1] = distanceToStart(layoutManager, targetView,
+                    getmVerticalHelper(layoutManager));
+        } else {
+            out[1] = 0;
+        }
+        return out;
+    }
+
+    private int distanceToStart(@NonNull RecyclerView.LayoutManager layoutManager,
+                                @NonNull View targetView, OrientationHelper helper) {
+        return helper.getDecoratedStart(targetView) - helper.getStartAfterPadding();
+    }
+
+    private int[] calculateDisOnEnd(@NonNull RecyclerView.LayoutManager layoutManager, @NonNull View targetView) {
+        int[] out = new int[2];
+        if (layoutManager.canScrollHorizontally()) {
+            out[0] = distanceToEnd(layoutManager, targetView,
+                    getmHorizontalHelper(layoutManager));
+        } else {
+            out[0] = 0;
+        }
+
+        if (layoutManager.canScrollVertically()) {
+            out[1] = distanceToEnd(layoutManager, targetView,
+                    getmVerticalHelper(layoutManager));
+        } else {
+            out[1] = 0;
+        }
+        return out;
+    }
+
+    private int distanceToEnd(@NonNull RecyclerView.LayoutManager layoutManager,
+                              @NonNull View targetView, OrientationHelper helper) {
+        return helper.getDecoratedEnd(targetView) - helper.getEndAfterPadding();
+    }
+
     @Override
     public View findSnapView(RecyclerView.LayoutManager layoutManager) {
         if (type == TYPE_SNAP_START) {
@@ -46,107 +103,24 @@ public class MySnapHelper extends LinearSnapHelper {
         }
     }
 
-    /**
-     * TYPE_SNAP_START
-     *
-     * @param layoutManager
-     * @param targetView
-     * @return
-     */
-    private int[] calculateDisOnStart(@NonNull RecyclerView.LayoutManager layoutManager, @NonNull View targetView) {
-        int[] out = new int[2];
-        if (layoutManager.canScrollHorizontally()) {
-            out[0] = distanceToStart(layoutManager, targetView,
-                    getHorizontalHelper(layoutManager));
-        } else {
-            out[0] = 0;
-        }
-
-        if (layoutManager.canScrollVertically()) {
-            out[1] = distanceToStart(layoutManager, targetView,
-                    getVerticalHelper(layoutManager));
-        } else {
-            out[1] = 0;
-        }
-        return out;
-    }
-
-
-    /**
-     * TYPE_SNAP_END
-     *
-     * @param layoutManager
-     * @param targetView
-     * @return
-     */
-    private int[] calculateDisOnEnd(@NonNull RecyclerView.LayoutManager layoutManager, @NonNull View targetView) {
-        int[] out = new int[2];
-        if (layoutManager.canScrollHorizontally()) {
-            out[0] = distanceToEnd(layoutManager, targetView,
-                    getHorizontalHelper(layoutManager));
-        } else {
-            out[0] = 0;
-        }
-
-        if (layoutManager.canScrollVertically()) {
-            out[1] = distanceToEnd(layoutManager, targetView,
-                    getVerticalHelper(layoutManager));
-        } else {
-            out[1] = 0;
-        }
-        return out;
-    }
-
-    /**
-     * calculate distance to start
-     *
-     * @param layoutManager
-     * @param targetView
-     * @param helper
-     * @return
-     */
-    private int distanceToStart(@NonNull RecyclerView.LayoutManager layoutManager,
-                                @NonNull View targetView, OrientationHelper helper) {
-        return helper.getDecoratedStart(targetView) - helper.getStartAfterPadding();
-    }
-
-
-    /**
-     * calculate distance to end
-     *
-     * @param layoutManager
-     * @param targetView
-     * @param helper
-     * @return
-     */
-    private int distanceToEnd(@NonNull RecyclerView.LayoutManager layoutManager,
-                              @NonNull View targetView, OrientationHelper helper) {
-        return helper.getDecoratedEnd(targetView) - helper.getEndAfterPadding();
-    }
-
-    /**
-     * find the start view
-     *
-     * @param layoutManager
-     * @return
-     */
     private View findStartSnapView(RecyclerView.LayoutManager layoutManager) {
         if (layoutManager.canScrollVertically()) {
-            return findStartView(layoutManager, getVerticalHelper(layoutManager));
+            return findStartView(layoutManager, getmVerticalHelper(layoutManager));
         } else if (layoutManager.canScrollHorizontally()) {
-            return findStartView(layoutManager, getHorizontalHelper(layoutManager));
+            return findStartView(layoutManager, getmHorizontalHelper(layoutManager));
         }
         return null;
     }
 
+    private View findEndSnapView(RecyclerView.LayoutManager layoutManager) {
+        if (layoutManager.canScrollVertically()) {
+            return findEndView(layoutManager, getmVerticalHelper(layoutManager));
+        } else if (layoutManager.canScrollHorizontally()) {
+            return findEndView(layoutManager, getmHorizontalHelper(layoutManager));
+        }
+        return null;
+    }
 
-    /**
-     * 注意判断最后一个item时，应通过判断距离右侧的位置
-     *
-     * @param layoutManager
-     * @param helper
-     * @return
-     */
     private View findStartView(RecyclerView.LayoutManager layoutManager, OrientationHelper helper) {
         if (!(layoutManager instanceof LinearLayoutManager)) { // only for LinearLayoutManager
             return null;
@@ -155,30 +129,23 @@ public class MySnapHelper extends LinearSnapHelper {
         if (childCount == 0) {
             return null;
         }
-
         View closestChild = null;
         final int start = helper.getStartAfterPadding();
-
         int absClosest = Integer.MAX_VALUE;
         for (int i = 0; i < childCount; i++) {
             final View child = layoutManager.getChildAt(i);
             int childStart = helper.getDecoratedStart(child);
             int absDistance = Math.abs(childStart - start);
-
             if (absDistance < absClosest) {
                 absClosest = absDistance;
                 closestChild = child;
             }
         }
-
         View firstVisibleChild = layoutManager.getChildAt(0);
-
         if (firstVisibleChild != closestChild) {
             return closestChild;
         }
-
         int firstChildStart = helper.getDecoratedStart(firstVisibleChild);
-
         int lastChildPos = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
         View lastChild = layoutManager.getChildAt(childCount - 1);
         int lastChildCenter = helper.getDecoratedStart(lastChild) + (helper.getDecoratedMeasurement(lastChild) / 2);
@@ -186,23 +153,7 @@ public class MySnapHelper extends LinearSnapHelper {
         if (isEndItem && firstChildStart < 0 && lastChildCenter < helper.getEnd()) {
             return lastChild;
         }
-
         return closestChild;
-    }
-
-    /**
-     * find the end view
-     *
-     * @param layoutManager
-     * @return
-     */
-    private View findEndSnapView(RecyclerView.LayoutManager layoutManager) {
-        if (layoutManager.canScrollVertically()) {
-            return findEndView(layoutManager, getVerticalHelper(layoutManager));
-        } else if (layoutManager.canScrollHorizontally()) {
-            return findEndView(layoutManager, getHorizontalHelper(layoutManager));
-        }
-        return null;
     }
 
     private View findEndView(RecyclerView.LayoutManager layoutManager, OrientationHelper helper) {
@@ -213,14 +164,11 @@ public class MySnapHelper extends LinearSnapHelper {
         if (childCount == 0) {
             return null;
         }
-
         if (((LinearLayoutManager) layoutManager).findLastCompletelyVisibleItemPosition() == 0) {
             return null;
         }
-
         View closestChild = null;
         final int end = helper.getEndAfterPadding();
-
         int absClosest = Integer.MAX_VALUE;
         for (int i = 0; i < childCount; i++) {
             final View child = layoutManager.getChildAt(i);
@@ -232,44 +180,34 @@ public class MySnapHelper extends LinearSnapHelper {
                 closestChild = child;
             }
         }
-
         View lastVisibleChild = layoutManager.getChildAt(childCount - 1);
-
         if (lastVisibleChild != closestChild) {
             return closestChild;
         }
-
         if (layoutManager.getPosition(closestChild) == ((LinearLayoutManager) layoutManager).findLastCompletelyVisibleItemPosition()) {
             return closestChild;
         }
-
         View firstChild = layoutManager.getChildAt(0);
         int firstChildStart = helper.getDecoratedStart(firstChild);
-
         int firstChildPos = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
         boolean isFirstItem = firstChildPos == 0;
-
-
         int firstChildCenter = helper.getDecoratedStart(firstChild) + (helper.getDecoratedMeasurement(firstChild) / 2);
         if (isFirstItem && firstChildStart < 0 && firstChildCenter > helper.getStartAfterPadding()) {
             return firstChild;
         }
-
         return closestChild;
     }
 
-
-    @NonNull
-    private OrientationHelper getVerticalHelper(@NonNull RecyclerView.LayoutManager layoutManager) {
+    @Nullable
+    public OrientationHelper getmVerticalHelper(@NonNull RecyclerView.LayoutManager layoutManager) {
         if (mVerticalHelper == null) {
             mVerticalHelper = OrientationHelper.createVerticalHelper(layoutManager);
         }
         return mVerticalHelper;
     }
 
-    @NonNull
-    private OrientationHelper getHorizontalHelper(
-            @NonNull RecyclerView.LayoutManager layoutManager) {
+    @Nullable
+    public OrientationHelper getmHorizontalHelper(@NonNull RecyclerView.LayoutManager layoutManager) {
         if (mHorizontalHelper == null) {
             mHorizontalHelper = OrientationHelper.createHorizontalHelper(layoutManager);
         }
