@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
         MySnapHelper helper = new MySnapHelper(3);
         helper.attachToRecyclerView(recyclerView);
         recyclerView.setAdapter(new RecyclerViewAdapter());
-
     }
 
     private void initDatas() {

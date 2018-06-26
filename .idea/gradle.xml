@@ -10,7 +10,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/footmark" />
-            <option value="$PROJECT_DIR$/sharedemo" />
+            <option value="$PROJECT_DIR$/porterduffxfermode" />
+            <option value="$PROJECT_DIR$/recyclerview" />
+            <option value="$PROJECT_DIR$/rxtext" />
             <option value="$PROJECT_DIR$/tablayout" />
           </set>
         </option>

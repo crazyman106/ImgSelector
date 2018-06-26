@@ -5,7 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/ImgSelector.iml" filepath="$PROJECT_DIR$/ImgSelector.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/footmark/footmark.iml" filepath="$PROJECT_DIR$/footmark/footmark.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sharedemo/sharedemo.iml" filepath="$PROJECT_DIR$/sharedemo/sharedemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/porterduffxfermode/porterduffxfermode.iml" filepath="$PROJECT_DIR$/porterduffxfermode/porterduffxfermode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/recyclerview/recyclerview.iml" filepath="$PROJECT_DIR$/recyclerview/recyclerview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxtext/rxtext.iml" filepath="$PROJECT_DIR$/rxtext/rxtext.iml" />
       <module fileurl="file://$PROJECT_DIR$/tablayout/tablayout.iml" filepath="$PROJECT_DIR$/tablayout/tablayout.iml" />
     </modules>
   </component>

@@ -75,7 +75,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     }
 
     private void fillData2View(final ViewHolder holder, final int position) {
-        Log.e("imagePath",images.get(position).getPath());
+        Log.e("imagePath", images.get(position).getPath());
         Glide.with(context).load(new File(images.get(position).getPath())).into(holder.imageView);
         holder.imgSelect.setVisibility(View.VISIBLE);
         setSelect(holder, position);
