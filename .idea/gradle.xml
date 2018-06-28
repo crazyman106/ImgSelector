@@ -9,7 +9,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/colorfilter" />
             <option value="$PROJECT_DIR$/footmark" />
+            <option value="$PROJECT_DIR$/mvp" />
             <option value="$PROJECT_DIR$/porterduffxfermode" />
             <option value="$PROJECT_DIR$/recyclerview" />
             <option value="$PROJECT_DIR$/rxtext" />

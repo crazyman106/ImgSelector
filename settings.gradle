@@ -1,1 +1,1 @@
-include ':app', ':tablayout', ':footmark', ':recyclerview', ':rxtext', ':porterduffxfermode', ':porterduffxfermode'
+include ':app', ':tablayout', ':footmark', ':recyclerview', ':rxtext', ':porterduffxfermode', ':porterduffxfermode', ':colorfilter', ':mvp'

@@ -3,6 +3,7 @@ package com.example.administrator.porterduffxfermode;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -28,8 +29,8 @@ public class TestXfermodeView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        Bitmap mDst = getCircleBitmap();
-        Bitmap mSrc = getRetangleBitmap();
+        Bitmap mSrc = getCircleBitmap();
+        Bitmap mDst = getRetangleBitmap();
         int sc = canvas.saveLayer(0f, 0f, (float) getWidth(), (float) getHeight(), null, Canvas.ALL_SAVE_FLAG);
 
         /**
@@ -37,10 +38,11 @@ public class TestXfermodeView extends View {
          */
         setLayerType(LAYER_TYPE_HARDWARE, null);
         Paint paint = new Paint();
+        canvas.drawARGB(0, 0, 0, 0);
         /**
          * 画bitmap的也透明
          */
-        canvas.drawBitmap(mDst, 0, 0, paint);
+        canvas.drawBitmap(mSrc, 0, 100, paint);  // circle:原图像,retangle:目标图像
         //        Bitmap b= BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher);
 //        Rect rect = new Rect(0, 0, 100, 100);
 //        canvas.drawBitmap(b,rect, rect, paint);
@@ -52,7 +54,7 @@ public class TestXfermodeView extends View {
         //只绘制目标图像未覆盖的源图像的部分
 //        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
         //取下层非交集部分与上层交集部分
-//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
 
 //        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST));
 //        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
@@ -61,16 +63,18 @@ public class TestXfermodeView extends View {
 //        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OVER));
 
 //        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.XOR));
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
 //        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.ADD));
 //        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
 //        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DARKEN));
 //        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.LIGHTEN));
 //        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.OVERLAY));
 //        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SCREEN));
-        canvas.drawBitmap(mSrc, 100, 100, paint);
+        canvas.drawBitmap(mDst, 100, 0, paint);
         paint.setXfermode(null);
         canvas.restoreToCount(sc);
+
+
 
     }
 
