@@ -3,9 +3,9 @@ package com.example.administrator.colorfilter.test.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.sqchen.bmobmvptest.test.BaseActivity;
-import com.sqchen.bmobmvptest.test.presenter.UserPresenter;
-import com.sqchen.bmobmvptest.test.view.ILoginView;
+import com.example.administrator.colorfilter.test.BaseActivity;
+import com.example.administrator.colorfilter.test.presenter.UserPresenter;
+import com.example.administrator.colorfilter.test.view.ILoginView;
 
 
 /**

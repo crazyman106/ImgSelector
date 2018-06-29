@@ -4,7 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import com.sqchen.bmobmvptest.test.presenter.BasePresenter;
+import com.example.administrator.colorfilter.test.presenter.BasePresenter;
+
 
 /**
  * @author lijunjie on 2018/6/28 0028.

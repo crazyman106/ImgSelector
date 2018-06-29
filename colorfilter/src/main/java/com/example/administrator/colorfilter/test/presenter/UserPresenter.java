@@ -1,6 +1,5 @@
 package com.example.administrator.colorfilter.test.presenter;
 
-import android.widget.Toast;
 
 import com.example.administrator.colorfilter.test.ICallBack;
 import com.example.administrator.colorfilter.test.model.IUserModel;
