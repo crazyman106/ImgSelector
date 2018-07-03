@@ -47,7 +47,7 @@ public class ColorFilterView extends View {
         // 创建画笔
         mPaintFilter = new Paint(Paint.ANTI_ALIAS_FLAG);
         // 创建BitMap
-        mBitMap = BitmapFactory.decodeResource(getResources(), R.mipmap.qustion_bg);
+        mBitMap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         // 新建颜色矩阵对象
         mColorMatrix = new ColorMatrix();
         // 设置颜色矩阵的值
