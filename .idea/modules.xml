@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/colorfilter/colorfilter.iml" filepath="$PROJECT_DIR$/colorfilter/colorfilter.iml" />
       <module fileurl="file://$PROJECT_DIR$/footmark/footmark.iml" filepath="$PROJECT_DIR$/footmark/footmark.iml" />
       <module fileurl="file://$PROJECT_DIR$/mvp/mvp.iml" filepath="$PROJECT_DIR$/mvp/mvp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/paint/paint.iml" filepath="$PROJECT_DIR$/paint/paint.iml" />
       <module fileurl="file://$PROJECT_DIR$/porterduffxfermode/porterduffxfermode.iml" filepath="$PROJECT_DIR$/porterduffxfermode/porterduffxfermode.iml" />
       <module fileurl="file://$PROJECT_DIR$/recyclerview/recyclerview.iml" filepath="$PROJECT_DIR$/recyclerview/recyclerview.iml" />
       <module fileurl="file://$PROJECT_DIR$/rxtext/rxtext.iml" filepath="$PROJECT_DIR$/rxtext/rxtext.iml" />
