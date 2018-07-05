@@ -2,6 +2,7 @@ package com.example.administrator.porterduffxfermode;
 
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
@@ -62,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
         //隐藏原生的缩放控件
         webSettings.setDisplayZoomControls(false);
 
+        if (Build.VERSION.SDK_INT >=Build.VERSION_CODES.KITKAT) {
+            webView.setWebContentsDebuggingEnabled(true);
+        }
 
         webView.requestFocus(); //此句可使html表单可以接收键盘输入
         webView.setFocusable(true);
