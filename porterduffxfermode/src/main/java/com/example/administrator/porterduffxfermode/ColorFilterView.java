@@ -47,7 +47,7 @@ public class ColorFilterView extends View {
         // 创建画笔
         mPaintFilter = new Paint(Paint.ANTI_ALIAS_FLAG);
         // 创建BitMap
-        mBitMap = BitmapFactory.decodeResource(getResources(), R.mipmap.qustion_bg);
+        mBitMap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         // 新建颜色矩阵对象
         mColorMatrix = new ColorMatrix();
         // 设置颜色矩阵的值
@@ -69,12 +69,12 @@ public class ColorFilterView extends View {
         int width = mBitMap.getWidth();
         int height = mBitMap.getHeight();
         Bitmap bmp = Bitmap.createBitmap(mBitMap.getWidth(), mBitMap.getHeight(), Bitmap.Config.ARGB_8888);
-        int[] oldPixs = new int[width*height];
-        int[] newPixs = new int[width*height];
+        int[] oldPixs = new int[width * height];
+        int[] newPixs = new int[width * height];
         mBitMap.getPixels(oldPixs, 0, width, 0, 0, width, height);
         int color;
-        int r,g,b;
-        int r1,g1,b1,a;
+        int r, g, b;
+        int r1, g1, b1, a;
         for (int i = 1; i < oldPixs.length; i++) {
             color = oldPixs[i];
             r = Color.red(color);
