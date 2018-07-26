@@ -24,11 +24,12 @@
     <com.example.administrator.paint.StaticLayoutView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <com.example.administrator.paint.CustomTextView
         android:id="@+id/text"
         android:layout_width="50dp"
         android:layout_height="15dp"
-        android:background="#22ff0000" />
+        android:background="#22ff0000"
+        android:visibility="gone" />
 </android.support.constraint.ConstraintLayout>

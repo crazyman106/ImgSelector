@@ -9,10 +9,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.RequiresApi;
+import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.View;
 
 public class StaticLayoutView extends View {
@@ -37,29 +37,29 @@ public class StaticLayoutView extends View {
      */
     private void initPaint() {
         // 实例化画笔
-       /* mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTextSize(50);
-        mTextPaint.setColor(Color.BLACK);*/
+        mTextPaint.setColor(Color.BLACK);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        /*Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(Color.BLACK);
         mPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, getResources().getDisplayMetrics()));
         canvas.drawText(i + "", 500, 200, mPaint);
 
         mPaint.setFontFeatureSettings("tnum");
         canvas.drawText(i + "", 500, 280, mPaint);
-      /*  canvas.save();
-        mStaticLayout = new StaticLayout(TEXT, mTextPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0F, 0.0F, false);
-        mStaticLayout.draw(canvas);
-        canvas.restore();*/
         if (i == 0) {
             mHandler.sendEmptyMessageDelayed(0, 50);
-        }
+        }*/
+        canvas.save();
+        mStaticLayout = new StaticLayout(TEXT + " \n" + TEXT, mTextPaint, canvas.getWidth(), Layout.Alignment.ALIGN_OPPOSITE, 2.0F, 8.0F, false);
+        mStaticLayout.draw(canvas);
+        canvas.restore();
     }
 
 

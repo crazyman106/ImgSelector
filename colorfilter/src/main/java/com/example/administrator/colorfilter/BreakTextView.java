@@ -1,6 +1,5 @@
 package com.example.administrator.colorfilter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,7 +12,9 @@ import android.util.TypedValue;
 import android.view.View;
 
 /**
- * Created by Administrator on 2018/7/3.
+ *
+ * @author Administrator
+ * @date 2018/7/3
  */
 
 public class BreakTextView extends View {
@@ -43,6 +44,5 @@ public class BreakTextView extends View {
         Log.e("YYYY", "breakText=" + ret + ", STR=" + STR.length() + ", value=" + value[0] + "-" + rect.right);
 //breakText=5, STR=8, value=195.0
         canvas.drawText(STR, 0, Math.abs(mPaint.getFontMetrics().ascent), mPaint);
-
     }
 }
