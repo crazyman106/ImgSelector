@@ -2,7 +2,9 @@ package com.example.administrator.paint;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -29,6 +31,8 @@ public class CustomTextView extends android.support.v7.widget.AppCompatTextView 
         if (textWidth > 0) {
             testPaint = new Paint();
             testPaint.set(this.getPaint());
+            testPaint.setColor(Color.BLACK);
+            testPaint.setHinting(Paint.HINTING_OFF);
             //获得当前TextView的有效宽度
             int availableWidth = textWidth - this.getPaddingLeft() - this.getPaddingRight();
             float[] widths = new float[text.length()];
@@ -49,7 +53,16 @@ public class CustomTextView extends android.support.v7.widget.AppCompatTextView 
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        refitText(getText().toString(), this.getWidth());
+//        refitText(getText().toString(), this.getWidth());
+        testPaint = new Paint();
+        testPaint.set(this.getPaint());
+        testPaint.setColor(Color.BLACK);
+        testPaint.setHinting(Paint.HINTING_OFF);
+        canvas.drawText(getText().toString(), 100, 200, testPaint);
+
+        canvas.translate(0, 100);
+        Path path = new Path();
+        testPaint.getTextPath(getText().toString(), 0, getText().toString().length(), 100f, 200f, path);
+        canvas.drawTextOnPath(getText().toString(), path, 0, 0, testPaint);
     }
 }
