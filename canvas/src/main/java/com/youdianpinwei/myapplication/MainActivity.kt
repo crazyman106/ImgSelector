@@ -1,7 +1,7 @@
-package com.youdianpinwei.canva
+package com.youdianpinwei.myapplication
 
-import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
 
 class MainActivity : AppCompatActivity() {
 

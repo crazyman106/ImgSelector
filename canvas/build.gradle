@@ -7,7 +7,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.youdianpinwei.canva"
+        applicationId "com.youdianpinwei.myapplication"
         minSdkVersion 16
         targetSdkVersion 27
         versionCode 1

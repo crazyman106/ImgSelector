@@ -9,7 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/canva" />
+            <option value="$PROJECT_DIR$/canvas" />
             <option value="$PROJECT_DIR$/colorfilter" />
             <option value="$PROJECT_DIR$/footmark" />
             <option value="$PROJECT_DIR$/mvp" />

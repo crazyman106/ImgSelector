@@ -1,4 +1,4 @@
-package com.youdianpinwei.canva
+package com.youdianpinwei.myapplication
 
 import org.junit.Test
 
