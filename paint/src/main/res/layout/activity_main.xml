@@ -29,4 +29,27 @@
     <com.example.administrator.paint.EmbossMaskFilterView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <com.example.administrator.paint.JoinCapTestView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <com.example.administrator.paint.StaticLayoutView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <com.example.administrator.paint.CustomTextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#22ff0000"
+        android:text="fasdffasdfdasfasdfdasda"
+        android:visibility="visible" />
+
+    <com.example.administrator.mPaint.PathEffectView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 </android.support.constraint.ConstraintLayout>

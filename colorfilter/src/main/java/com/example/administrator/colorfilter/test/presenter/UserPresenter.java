@@ -16,7 +16,6 @@ public class UserPresenter extends BasePresenter<ILoginView> {
     IUserModel iUserModel;
     ILoginView iLoginView;
 
-
     public UserPresenter(ILoginView iLoginView) {
         this.iUserModel = new IuserModelImpl();
         this.iLoginView = iLoginView;

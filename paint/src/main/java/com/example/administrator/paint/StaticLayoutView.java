@@ -5,6 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -23,10 +28,11 @@ public class StaticLayoutView extends View {
 
     public StaticLayoutView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         // 初始化画笔
         initPaint();
     }
+
+    int i = 0;
 
     /**
      * 初始化画笔
@@ -38,24 +44,33 @@ public class StaticLayoutView extends View {
         mTextPaint.setColor(Color.BLACK);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        mStaticLayout = new StaticLayout(TEXT, mTextPaint, canvas.getWidth(), Layout.Alignment.ALIGN_NORMAL,
-                1.0F, 0.0F, false);
+        /*Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint.setColor(Color.BLACK);
+        mPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, getResources().getDisplayMetrics()));
+        canvas.drawText(i + "", 500, 200, mPaint);
+
+        mPaint.setFontFeatureSettings("tnum");
+        canvas.drawText(i + "", 500, 280, mPaint);
+        if (i == 0) {
+            mHandler.sendEmptyMessageDelayed(0, 50);
+        }*/
+        canvas.save();
+        mStaticLayout = new StaticLayout(TEXT + " \n" + TEXT, mTextPaint, canvas.getWidth(), Layout.Alignment.ALIGN_OPPOSITE, 2.0F, 8.0F, false);
         mStaticLayout.draw(canvas);
+        canvas.restore();
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                break;
-            case MotionEvent.ACTION_BUTTON_PRESS:
-                break;
-            default:
-                break;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            i++;
+            mHandler.sendEmptyMessageDelayed(0, 50);
+            postInvalidate();
         }
-        return super.onTouchEvent(event);
-    }
+    };
 }

@@ -1,19 +1,28 @@
 package com.example.administrator.porterduffxfermode;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.SurfaceHolder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 
+import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -63,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
         //隐藏原生的缩放控件
         webSettings.setDisplayZoomControls(false);
 
-        if (Build.VERSION.SDK_INT >=Build.VERSION_CODES.KITKAT) {
-            webView.setWebContentsDebuggingEnabled(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
         }
 
         webView.requestFocus(); //此句可使html表单可以接收键盘输入
@@ -128,6 +137,29 @@ public class MainActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient() {
 
             @Override
+            public com.tencent.smtt.export.external.interfaces.WebResourceResponse shouldInterceptRequest(WebView webView, WebResourceRequest webResourceRequest) {
+                FileInputStream input;
+                String url = webResourceRequest.getUrl().toString();
+                Log.e("url", url);
+                String key = "http://androidimg";
+                /*如果请求包含约定的字段 说明是要拿本地的图片*/
+                if (url.contains(".jpg") || url.contains(".mp3")) {
+                    String imgPath = url.replace(key, "");
+                    try {
+                    /*重新构造WebResourceResponse  将数据已流的方式传入*/
+                        String micUlr = "/storage/emulated/0/ypw/intelligent_scenic/f61e4f62-8b97-47b9-a874-3d6a14c2da7e#/8369c288-5e25-4eb3-b420-5fcc37f7be34.jpg";
+                        Log.e("micUlr", micUlr);
+                        input = new FileInputStream(new File(micUlr));
+                        com.tencent.smtt.export.external.interfaces.WebResourceResponse response = new com.tencent.smtt.export.external.interfaces.WebResourceResponse(MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(micUlr)), "UTF-8", input);
+                        return response;
+                    } catch (Exception e) {
+                        Log.e("exception", e.getMessage().toString());
+                    }
+                }
+                return super.shouldInterceptRequest(webView, webResourceRequest);
+            }
+
+            @Override
             public boolean shouldOverrideUrlLoading(WebView webView, String s) {
 
 
@@ -151,13 +183,25 @@ public class MainActivity extends AppCompatActivity {
             public void onReceivedError(WebView webView, int i, String s, String s1) {
                 super.onReceivedError(webView, i, s, s1);
             }
-
-
-
         });
-
-        webView.loadUrl(url);
-
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // 申请权限
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+        } else {
+            Log.e("loadurl", "loadurl");
+            webView.loadUrl("http://yujing.youdianpinwei.com/IntelligentGuide/Maps?ScenicID=F61E4F62-8B97-47B9-A874-3D6A14C2DA7E&FSourceScenicId=53c47abb-10d5-4d7d-837d-3918257b5f0a&FSocreScenicAccount=10615773-50c2-40bf-8bbc-0060618ffe34");
+        }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 0) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 获得授权
+                webView.loadUrl("http://yujing.youdianpinwei.com/IntelligentGuide/Maps?ScenicID=F61E4F62-8B97-47B9-A874-3D6A14C2DA7E&FSourceScenicId=53c47abb-10d5-4d7d-837d-3918257b5f0a&FSocreScenicAccount=10615773-50c2-40bf-8bbc-0060618ffe34");
+            } else {
+            }
+        }
+    }
 }

@@ -69,12 +69,12 @@ public class ColorFilterView extends View {
         int width = mBitMap.getWidth();
         int height = mBitMap.getHeight();
         Bitmap bmp = Bitmap.createBitmap(mBitMap.getWidth(), mBitMap.getHeight(), Bitmap.Config.ARGB_8888);
-        int[] oldPixs = new int[width*height];
-        int[] newPixs = new int[width*height];
+        int[] oldPixs = new int[width * height];
+        int[] newPixs = new int[width * height];
         mBitMap.getPixels(oldPixs, 0, width, 0, 0, width, height);
         int color;
-        int r,g,b;
-        int r1,g1,b1,a;
+        int r, g, b;
+        int r1, g1, b1, a;
         for (int i = 1; i < oldPixs.length; i++) {
             color = oldPixs[i];
             r = Color.red(color);
