@@ -2,6 +2,8 @@ package com.youdianpinwei.myapplication
 
 import android.content.Context
 import android.graphics.*
+import android.os.Build
+import android.support.annotation.RequiresApi
 import android.util.AttributeSet
 import android.view.View
 
@@ -43,9 +45,59 @@ class CusView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        canvas?.translate(5f, 5f)
-        canvas?.concat(mMatrix);
-        canvas?.drawBitmap(bitmap, 0f, 0f, paint)
+
+        paint.textSize = 20f
+        paint.shader = LinearGradient(0f, 0f, 80f, 30f, Color.RED, Color.GREEN, Shader.TileMode.CLAMP)
+        paint.setShadowLayer(5f, 2f, 3f, Color.parseColor("#77000000"))
+        canvas?.drawText("android开发", 0, 3, 5f, 30f, paint)
+
+/*        paint.setShader(BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP))
+        var rectF1 = RectF(0f, 0f, 240f, 160f)
+        canvas?.drawRoundRect(rectF1, 40f, 40f, paint)
+
+        paint.shader = null
+        paint.style = Paint.Style.FILL_AND_STROKE
+        paint.strokeWidth = 1f
+        paint.color = Color.BLACK
+        canvas?.drawPoint(250f,40f,paint)
+        canvas?.drawPoint(250f,80f,paint)
+        canvas?.drawPoint(250f,120f,paint)*/
+
+        /* canvas?.translate(5f, 5f)
+         canvas?.matrix=mMatrix
+         canvas?.concat(mMatrix)
+         canvas?.drawBitmap(bitmap, 0f, 0f, paint)
+         */
+        /*  paint.strokeWidth = 3f
+          var rectF1 = RectF(0f, 0f, 100f, 100f)
+          paint.style = Paint.Style.FILL_AND_STROKE
+          paint.color = Color.RED
+          canvas?.drawRect(rectF1, paint)
+          paint.style = Paint.Style.STROKE
+          paint.color = Color.WHITE
+          canvas?.drawArc(rectF1, 0f, 120f, true, paint)
+
+          paint.style = Paint.Style.FILL_AND_STROKE
+          var rectF2 = RectF(0f, 150f, 100f, 250f)
+          paint.color = Color.RED
+          canvas?.drawRect(rectF2, paint)
+          paint.color = Color.WHITE
+          paint.style = Paint.Style.STROKE
+          canvas?.drawArc(rectF2, 0f, 120f, false, paint)
+
+
+          var rectF3 = RectF(150f, 0f, 250f, 100f)
+          paint.style = Paint.Style.FILL_AND_STROKE
+          paint.color = Color.RED
+          canvas?.drawRect(rectF3, paint)
+          paint.color = Color.WHITE
+          canvas?.drawArc(rectF3, 0f, 120f, true, paint)
+
+          var rectF4 = RectF(150f, 150f, 250f, 250f)
+          paint.color = Color.RED
+          canvas?.drawRect(rectF4, paint)
+          paint.color = Color.WHITE
+          canvas?.drawArc(rectF4, 0f, 120f, false, paint)*/
     }
 
     public fun click() {

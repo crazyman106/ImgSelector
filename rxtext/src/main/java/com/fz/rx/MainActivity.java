@@ -12,6 +12,8 @@ import rx.Subscriber;
 
 public class MainActivity extends AppCompatActivity {
 
+    TransformTxtView transformTxtView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +24,12 @@ public class MainActivity extends AppCompatActivity {
         files.add(new File("fasdf/fasd.png"));
         files.add(new File("fasdf/fasd"));
         files.add(new File("fasdf/fasd4.png"));
+
+
+        transformTxtView = findViewById(R.id.txt);
+//        transformTxtView.setRotate(40);
+
+
 
         /*Subscriber<Bitmap> subscriber = new Subscriber<Bitmap>() {
             @Override
