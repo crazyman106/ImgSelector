@@ -6,13 +6,15 @@
     tools:context="com.youdianpinwei.myapplication.MainActivity">
 
     <com.youdianpinwei.myapplication.CusView
-        android:layout_width="wrap_content"
         android:id="@+id/cusview"
-        android:layout_height="wrap_content" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible" />
 
     <Button
         android:layout_width="200dp"
-        android:onClick="matrixClick"
         android:layout_height="45dp"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:onClick="matrixClick" />
+
 </RelativeLayout>
