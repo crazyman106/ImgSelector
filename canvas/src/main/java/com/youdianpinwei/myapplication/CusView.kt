@@ -46,7 +46,6 @@ class CusView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
         canvas?.translate(5f, 5f)
         canvas?.concat(mMatrix);
         canvas?.drawBitmap(bitmap, 0f, 0f, paint)
-
     }
 
     public fun click() {
