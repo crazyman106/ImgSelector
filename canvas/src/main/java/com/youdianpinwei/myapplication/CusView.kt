@@ -2,9 +2,10 @@ package com.youdianpinwei.myapplication
 
 import android.content.Context
 import android.graphics.*
+import android.os.Build
+import android.support.annotation.RequiresApi
 import android.text.TextPaint
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
 
 
@@ -147,93 +148,58 @@ class CusView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
 
     var paint: TextPaint
     var bitmap: Bitmap
-    private val WIDTH = 60
-    private val HEIGHT = 60
-    private val COUNT = (WIDTH + 1) * (HEIGHT + 1)
-
-    private val mVerts = FloatArray(COUNT * 2)
-    private val mOrig = FloatArray(COUNT * 2)
-
-    private val mMatrix = Matrix()
-    private val mInverse = Matrix()
 
     init {
         paint = TextPaint(Paint.ANTI_ALIAS_FLAG)
         bitmap = BitmapFactory.decodeResource(resources, R.mipmap.mn)
-        isFocusable = true
-
-        val w = bitmap.getWidth().toFloat()
-        val h = bitmap.getHeight().toFloat()
-        // 根据图片高宽和网格数量,填充mVerts内容
-        var index = 0
-        for (y in 0..HEIGHT) {
-            val fy = h * y / HEIGHT
-            for (x in 0..WIDTH) {
-                val fx = w * x / WIDTH
-                setXY(mVerts, index, fx, fy)
-                setXY(mOrig, index, fx, fy)
-                index += 1
-            }
-        }
-
-        mMatrix.setTranslate(10f, 10f)
-        mMatrix.invert(mInverse)
     }
 
-    private fun setXY(array: FloatArray, index: Int, x: Float, y: Float) {
-        array[index * 2 + 0] = x
-        array[index * 2 + 1] = y
-    }
 
+    /**
+     *  ALL_SAVE_FLAG
+    在调用save时调用,用来表示保存全部数据,例如色值和透明度等等...,在调用restore()可以恢复全部数据.
+     *  MATRIX_SAVE_FLAG
+    只保存图层的matrix矩阵(开启硬件加速),在O版本中,canvas自动含有该功能
+     *  CLIP_SAVE_FLAG
+    使用方法同上:只是保存和恢复的是当前clip的内容(开启硬件加速),在O版本中,canvas自动含有该功能
+     *  CLIP_TO_LAYER_SAVE_FLAG
+     *  在调用saveLayer()
+    创建图层时，会把canvas（所有图层）裁剪到参数指定的范围，如果省略这个flag将导致图层开销巨大（实际上图层没有裁剪，与原图层一样大）
+     *  FULL_COLOR_LAYER_SAVE_FLAG
+    完全保留该图层颜色（和上一图层合并时，清空上一图层的重叠区域，保留该图层的颜色）
+     *  HAS_ALPHA_LAYER_SAVE_FLAG
+     *  表明该图层有透明度，和下面的标识冲突，都设置时以下面的标志为准
+     */
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        canvas?.drawColor(-0x333334)
+        paint.color = Color.BLUE
+        paint.style = Paint.Style.FILL_AND_STROKE
+        // 在原始图层上画图
+        canvas?.drawCircle(200f, 200f, 80f, paint)
 
-        canvas?.concat(mMatrix)
-        canvas?.drawBitmapMesh(bitmap, WIDTH, HEIGHT, mVerts, 0, null, 0, null)
-    }
+        // 创建一个新的透明图层(图层的边界是:0,0,300,300)(如果在该图层的paint没有透明色值时,则使用0x77该透明度值,如果paint有透明色值,则使用该paint的透明值)
+        val layerAlpha: Int? = canvas?.saveLayerAlpha(0f, 0f, 300f, 300f, 0x77)
+        // 在透明图层上画图
+        canvas?.drawColor(Color.parseColor("#44ff0000"))
+        // paint.color = Color.parseColor("#55ff0000")
+        canvas?.drawCircle(150f, 150f, 80f, paint)
 
-    private fun warp(cx: Float, cy: Float) {
-        val K = 10000f
-        val src = mOrig
-        val dst = mVerts
-        var i = 0
-        while (i < COUNT * 2) {
-            val x = src[i + 0]
-            val y = src[i + 1]
-            val dx = cx - x
-            val dy = cy - y
-            val dd = dx * dx + dy * dy
-            val d = Math.sqrt(dd.toDouble()).toFloat()
-            var pull = K / (dd + 0.000001f)
-            pull /= d + 0.000001f
-            if (pull >= 1) {
-                dst[i + 0] = cx
-                dst[i + 1] = cy
-            } else {
-                dst[i + 0] = x + dx * pull
-                dst[i + 1] = y + dy * pull
-            }
-            i += 2
-        }
-    }
+        // 创建一个新的图层layerAlpha1高宽400x400
+        val layerAlpha1 = canvas?.saveLayerAlpha(0f, 0f, 400f, 400f, 0x255)
+        paint.color = Color.parseColor("#ff0000")
+        canvas?.drawRect(0f, 0f, 100f, 100f, paint)
+        //该图层上画矩形
 
-    private var mLastWarpX = -9999
-    private var mLastWarpY: Int = 0
-
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        val pt = floatArrayOf(event.x, event.y)
-        mInverse.mapPoints(pt)
-
-        val x = pt[0].toInt()
-        val y = pt[1].toInt()
-        if (mLastWarpX != x || mLastWarpY != y) {
-            mLastWarpX = x
-            mLastWarpY = y
-            warp(pt[0], pt[1])
-            invalidate()
-        }
-        return true
+        // 还原layerAlpha1图层
+        layerAlpha1?.let { canvas?.restoreToCount(it) }
+        paint.color = Color.GREEN
+        // 在layerAlpha图层上继续画图
+        canvas?.drawCircle(250f, 250f, 80f, paint)
+        // 还原layerAlpha图层到原始图层上
+        layerAlpha?.let { canvas?.restoreToCount(it) }
+        // 在最初的图层上画图
+        canvas?.drawCircle(350f, 350f, 80f, paint)
     }
 
 }
