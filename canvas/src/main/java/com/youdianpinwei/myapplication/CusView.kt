@@ -143,6 +143,33 @@ p.color = Color.GREEN
 p.textSize = 30f
 canvas.drawText("Pictures", 60f, 60f, p)
 }
+paint.color = Color.BLUE
+paint.style = Paint.Style.FILL_AND_STROKE
+// 在原始图层上画图
+canvas?.drawCircle(200f, 200f, 80f, paint)
+
+// 创建一个新的透明图层(图层的边界是:0,0,300,300)(如果在该图层的paint没有透明色值时,则使用0x77该透明度值,如果paint有透明色值,则使用该paint的透明值)
+val layerAlpha: Int? = canvas?.saveLayerAlpha(0f, 0f, 300f, 300f, 0x77)
+// 在透明图层上画图
+canvas?.drawColor(Color.parseColor("#44ff0000"))
+// paint.color = Color.parseColor("#55ff0000")
+canvas?.drawCircle(150f, 150f, 80f, paint)
+
+// 创建一个新的图层layerAlpha1高宽400x400
+val layerAlpha1 = canvas?.saveLayerAlpha(0f, 0f, 400f, 400f, 0x255)
+paint.color = Color.parseColor("#ff0000")
+canvas?.drawRect(0f, 0f, 100f, 100f, paint)
+//该图层上画矩形
+
+// 还原layerAlpha1图层
+layerAlpha1?.let { canvas?.restoreToCount(it) }
+paint.color = Color.GREEN
+// 在layerAlpha图层上继续画图
+canvas?.drawCircle(250f, 250f, 80f, paint)
+// 还原layerAlpha图层到原始图层上
+layerAlpha?.let { canvas?.restoreToCount(it) }
+// 在最初的图层上画图
+canvas?.drawCircle(350f, 350f, 80f, paint)
  */
 class CusView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
 
@@ -154,52 +181,10 @@ class CusView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
         bitmap = BitmapFactory.decodeResource(resources, R.mipmap.mn)
     }
 
-
-    /**
-     *  ALL_SAVE_FLAG
-    在调用save时调用,用来表示保存全部数据,例如色值和透明度等等...,在调用restore()可以恢复全部数据.
-     *  MATRIX_SAVE_FLAG
-    只保存图层的matrix矩阵(开启硬件加速),在O版本中,canvas自动含有该功能
-     *  CLIP_SAVE_FLAG
-    使用方法同上:只是保存和恢复的是当前clip的内容(开启硬件加速),在O版本中,canvas自动含有该功能
-     *  CLIP_TO_LAYER_SAVE_FLAG
-     *  在调用saveLayer()
-    创建图层时，会把canvas（所有图层）裁剪到参数指定的范围，如果省略这个flag将导致图层开销巨大（实际上图层没有裁剪，与原图层一样大）
-     *  FULL_COLOR_LAYER_SAVE_FLAG
-    完全保留该图层颜色（和上一图层合并时，清空上一图层的重叠区域，保留该图层的颜色）
-     *  HAS_ALPHA_LAYER_SAVE_FLAG
-     *  表明该图层有透明度，和下面的标识冲突，都设置时以下面的标志为准
-     */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        paint.color = Color.BLUE
-        paint.style = Paint.Style.FILL_AND_STROKE
-        // 在原始图层上画图
-        canvas?.drawCircle(200f, 200f, 80f, paint)
 
-        // 创建一个新的透明图层(图层的边界是:0,0,300,300)(如果在该图层的paint没有透明色值时,则使用0x77该透明度值,如果paint有透明色值,则使用该paint的透明值)
-        val layerAlpha: Int? = canvas?.saveLayerAlpha(0f, 0f, 300f, 300f, 0x77)
-        // 在透明图层上画图
-        canvas?.drawColor(Color.parseColor("#44ff0000"))
-        // paint.color = Color.parseColor("#55ff0000")
-        canvas?.drawCircle(150f, 150f, 80f, paint)
-
-        // 创建一个新的图层layerAlpha1高宽400x400
-        val layerAlpha1 = canvas?.saveLayerAlpha(0f, 0f, 400f, 400f, 0x255)
-        paint.color = Color.parseColor("#ff0000")
-        canvas?.drawRect(0f, 0f, 100f, 100f, paint)
-        //该图层上画矩形
-
-        // 还原layerAlpha1图层
-        layerAlpha1?.let { canvas?.restoreToCount(it) }
-        paint.color = Color.GREEN
-        // 在layerAlpha图层上继续画图
-        canvas?.drawCircle(250f, 250f, 80f, paint)
-        // 还原layerAlpha图层到原始图层上
-        layerAlpha?.let { canvas?.restoreToCount(it) }
-        // 在最初的图层上画图
-        canvas?.drawCircle(350f, 350f, 80f, paint)
     }
 
 }
