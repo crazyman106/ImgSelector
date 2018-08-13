@@ -6,6 +6,7 @@ import android.os.Build
 import android.support.annotation.RequiresApi
 import android.text.TextPaint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 
 
@@ -184,7 +185,12 @@ class CusView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
+        var rect = Rect(0, 100, 200, 400)
+        canvas?.drawRect(rect, paint)
+        var rectF = RectF()
+        rectF.set(rect)
+        val reject = canvas?.quickReject(rectF, Canvas.EdgeType.AA)
+        Log.e("quickReject", reject.toString())
     }
 
 }
