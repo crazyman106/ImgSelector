@@ -5,6 +5,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
+import android.os.Build
+import android.support.annotation.RequiresApi
 import android.util.AttributeSet
 import android.view.View
 
@@ -21,36 +23,43 @@ class PathViewTst @JvmOverloads constructor(context: Context, attrs: AttributeSe
         isFocusable = true
         isFocusableInTouchMode = true
         mPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        mPaint.color = Color.parseColor("#FF8C00")
+        mPaint.textSize = 17f
         mPath = Path()
-        mPath.addCircle(40f, 40f, 45f, Path.Direction.CCW)
-        mPath.addCircle(80f, 80f, 45f, Path.Direction.CCW)
     }
 
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        /* val paint = mPaint
-         canvas?.drawColor(-0x333334)
-         canvas?.translate(20f, 20f)
-         paint.setAntiAlias(true)
+        canvas?.translate(250f, 0f)
 
-         showPath(canvas!!, 0, 0, Path.FillType.WINDING, paint)
-         showPath(canvas!!, 160, 0, Path.FillType.EVEN_ODD, paint)
-         showPath(canvas!!, 0, 160, Path.FillType.INVERSE_WINDING, paint)
-         showPath(canvas!!, 160, 160, Path.FillType.INVERSE_EVEN_ODD, paint)*/
+        val path1 = Path()
+        val path2 = Path()
+        val pathOpResult = Path()
 
-        mPaint.style = Paint.Style.FILL
-        mPaint.color = Color.RED
-        canvas?.translate((width / 2).toFloat(), (height / 2).toFloat())
-        val path = Path()
-        // 叠加两个不同半径圆形组成自相交图形用来展示不同Direction下的非零环绕规则
-        path.addCircle(-250f, 0f, 100f, Path.Direction.CW);
-        path.addCircle(-250f, 0f, 200f, Path.Direction.CCW)
+        path1.addCircle(-80f, 0f, 100f, Path.Direction.CW)
+        path2.addCircle(80f, 0f, 100f, Path.Direction.CW)
 
-        path.addCircle(250f, 0f, 100f, Path.Direction.CCW);
-        path.addCircle(250f, 0f, 200f, Path.Direction.CCW)
+        pathOpResult.op(path1,Path.Op.DIFFERENCE)
+        canvas?.translate(0f, 200f)
+        canvas?.drawPath(pathOpResult, mPaint)
 
-        path.fillType = Path.FillType.WINDING
-        canvas?.drawPath(path, mPaint)
+        pathOpResult.op(path1, Path.Op.REVERSE_DIFFERENCE)
+        canvas?.translate(0f, 300f)
+        canvas?.drawPath(pathOpResult, mPaint)
+
+        pathOpResult.op(path1,  Path.Op.INTERSECT)
+        canvas?.translate(0f, 300f)
+        canvas?.drawPath(pathOpResult, mPaint)
+
+        pathOpResult.op(path1,  Path.Op.UNION)
+        canvas?.translate(0f, 300f)
+        canvas?.drawPath(pathOpResult, mPaint)
+
+        pathOpResult.op(path1, Path.Op.XOR)
+        canvas?.translate(0f, 300f)
+        canvas?.drawPath(pathOpResult, mPaint)
+
     }
 
     private fun showPath(canvas: Canvas, x: Int, y: Int, ft: Path.FillType,
