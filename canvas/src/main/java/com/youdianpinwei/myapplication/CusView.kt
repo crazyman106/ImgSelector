@@ -171,26 +171,61 @@ canvas?.drawCircle(250f, 250f, 80f, paint)
 layerAlpha?.let { canvas?.restoreToCount(it) }
 // 在最初的图层上画图
 canvas?.drawCircle(350f, 350f, 80f, paint)
+var rect = Rect(0, 100, 200, 400)
+canvas?.drawRect(rect, paint)
+var rectF = RectF()
+rectF.set(rect)
+val reject = canvas?.quickReject(rectF, Canvas.EdgeType.AA)
+Log.e("quickReject", reject.toString())
+paint.shader = BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+canvas?.translate(10f, 10f)
+path.addRoundRect(RectF(0f, 0f, 200f, 150f), 20f, 20f, Path.Direction.CCW)
+canvas?.drawPath(path, paint)
+
+paint.style = Paint.Style.STROKE
+path.addRoundRect(RectF(220f, 0f, 420f, 150f), 30f, 30f, Path.Direction.CCW)
+canvas?.drawPath(path, paint)
+
+
+path.addRoundRect(RectF(0f, 200f, 200f, 350f), floatArrayOf(20f, 20f, 0f, 0f, 0f, 0f, 0f, 0f), Path.Direction.CCW)
+canvas?.drawPath(path, paint)
+
+path.addRoundRect(RectF(220f, 200f, 420f, 350f), floatArrayOf(20f, 20f, 20f, 20f,  0f, 0f, 0f, 0f), Path.Direction.CCW)
+canvas?.drawPath(path, paint)
+
+path.addRoundRect(RectF(440f, 200f, 640f, 350f), floatArrayOf(20f, 20f, 20f, 20f,20f, 20f, 0f, 0f), Path.Direction.CCW)
+canvas?.drawPath(path, paint)
+var path1 = Path();
+var path2 = Path();
+path1.addCircle(0f, 0f, 100f, Path.Direction.CCW)
+path2.addCircle(100f, 100f, 50f, Path.Direction.CCW)
+path.addPath(path1)
+path.addPath(path2,-100f,-100f)
+canvas?.drawPath(path, paint)
  */
 class CusView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
 
     var paint: TextPaint
     var bitmap: Bitmap
+    var path: Path;
 
     init {
         paint = TextPaint(Paint.ANTI_ALIAS_FLAG)
         bitmap = BitmapFactory.decodeResource(resources, R.mipmap.mn)
+        path = Path()
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        var rect = Rect(0, 100, 200, 400)
-        canvas?.drawRect(rect, paint)
-        var rectF = RectF()
-        rectF.set(rect)
-        val reject = canvas?.quickReject(rectF, Canvas.EdgeType.AA)
-        Log.e("quickReject", reject.toString())
+        canvas?.translate(width / 2.toFloat(), height / 2.toFloat())
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = 2f
+
+        path.moveTo(0f, 0f)
+        path.lineTo(200f, 0f)
+        path.arcTo(RectF(300f, 0f, 500f, 200f), 0f, 270f, true)
+        canvas?.drawPath(path, paint)
+
     }
 
 }
