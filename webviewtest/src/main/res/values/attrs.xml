@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CircleDownloadingView">
+        <attr name="LoadingType" format="enum">
+            <enum name="NONE" value="0" />
+            <enum name="DOWNLOADING" value="1" />
+            <enum name="PAUSE" value="2" />
+            <enum name="DOWNLOADED" value="3" />
+        </attr>
+        <attr name="BorderColor" format="color" />
+        <attr name="BorderWidth" format="dimension" />
+        <attr name="BorderBgColor" format="color" />
+    </declare-styleable>
+</resources>
