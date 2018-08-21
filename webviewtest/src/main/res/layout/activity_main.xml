@@ -14,5 +14,10 @@
     <com.youdianpinwei.webviewtest.CircleDownloadingView
         android:layout_width="45dp"
         app:LoadingType="PAUSE"
+        android:visibility="gone"
         android:layout_height="45dp" />
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/webview"></WebView>
 </android.support.constraint.ConstraintLayout>
