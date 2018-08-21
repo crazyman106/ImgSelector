@@ -1,0 +1,28 @@
+@startuml
+
+interface Observer
+{
+    notify()
+}
+class ConcreteObserverA
+{
+    notify()
+}
+class ConcreteObserverB
+{
+    notify()
+}
+abstract class Observable
+{
+    observerCollection()
+    registerObserver(Observer observer)
+    unRegisterObserver(Observer observer)
+    notifyObservers()
+}
+
+Observer <|-- ConcreteObserverA
+Observer <|-- ConcreteObserverB
+
+Observer <- Observable : subcribe(Observer)
+
+@enduml
