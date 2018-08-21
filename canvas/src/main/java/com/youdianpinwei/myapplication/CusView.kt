@@ -217,13 +217,17 @@ class CusView @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        canvas?.translate(width / 2.toFloat(), height / 2.toFloat())
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 2f
 
-        path.moveTo(0f, 0f)
-        path.lineTo(200f, 0f)
-        path.arcTo(RectF(300f, 0f, 500f, 200f), 0f, 270f, true)
+        paint.color = Color.RED
+        path.addCircle(200f, 200f, 80f, Path.Direction.CCW)
+        canvas?.drawPath(path, paint)
+
+        paint.color = Color.GREEN
+        var matrix: Matrix = Matrix()
+        matrix.setScale(0.5f, 0.5f)
+        path.transform(matrix)
         canvas?.drawPath(path, paint)
 
     }

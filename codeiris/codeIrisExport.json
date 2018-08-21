@@ -1,0 +1,362 @@
+[
+  {
+    "packageName": "android.arch.lifecycle",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "android.arch.core",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "android.support.constraint",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "android.support.coreui",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "android.support.compat",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint",
+    "superClass": null,
+    "className": "EmbossMaskFilterView",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "android.arch.lifecycle.viewmodel",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint",
+    "superClass": null,
+    "className": "CustomTextView",
+    "associations": [],
+    "usages": [
+      "com.example.administrator.paint.MainActivity"
+    ],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint",
+    "superClass": null,
+    "className": "BuildConfig",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.test",
+    "superClass": null,
+    "className": "BuildConfig",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "android.arch.lifecycle.livedata.core",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.test",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.funny",
+    "superClass": null,
+    "className": "AppConst",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint",
+    "superClass": null,
+    "className": "ExampleUnitTest",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint",
+    "superClass": null,
+    "className": "ExampleInstrumentedTest",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint",
+    "superClass": null,
+    "className": "MainActivity",
+    "associations": [
+      "com.example.administrator.paint.CustomTextView"
+    ],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.funny.view",
+    "superClass": null,
+    "className": "AddFrameHolder",
+    "associations": [
+      "com.example.administrator.paint.funny.view.AddWordFrameState",
+      "com.example.administrator.paint.funny.view.AddWordFrame"
+    ],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.funny.view",
+    "superClass": null,
+    "className": "AddWordFrame",
+    "associations": [
+      "com.example.administrator.paint.funny.view.AddWordOutsideLinearLayout"
+    ],
+    "usages": [
+      "com.example.administrator.paint.funny.view.AddFrameHolder"
+    ],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.funny.util",
+    "superClass": null,
+    "className": "BitmapUtils",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.funny.util",
+    "superClass": null,
+    "className": "DeviceInfoUtils",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint",
+    "superClass": null,
+    "className": "MeasureUtil",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint",
+    "superClass": null,
+    "className": "StaticLayoutView",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.funny.util",
+    "superClass": null,
+    "className": "LogUtils",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.funny.util",
+    "superClass": null,
+    "className": "StatusBarHeightUtil",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.funny.view",
+    "superClass": null,
+    "className": "AddWordInsideLinearlayout",
+    "associations": [
+      "com.example.administrator.paint.funny.view.AddWordTextView"
+    ],
+    "usages": [
+      "com.example.administrator.paint.funny.view.AddWordOutsideLinearLayout"
+    ],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.funny.view",
+    "superClass": null,
+    "className": "AddWordFrameState",
+    "associations": [],
+    "usages": [
+      "com.example.administrator.paint.funny.view.AddFrameHolder"
+    ],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "android.support.fragment",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "android.support.coreutils",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "android.support.graphics.drawable",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.funny.util",
+    "superClass": null,
+    "className": "StringUtils",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.funny.view",
+    "superClass": null,
+    "className": "AddWordTextView",
+    "associations": [],
+    "usages": [
+      "com.example.administrator.paint.funny.view.AddWordOutsideLinearLayout",
+      "com.example.administrator.paint.funny.view.AddWordInsideLinearlayout"
+    ],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "com.example.administrator.paint.funny.view",
+    "superClass": null,
+    "className": "AddWordOutsideLinearLayout",
+    "associations": [
+      "com.example.administrator.paint.funny.view.AddWordOutsideLinearLayout",
+      "com.example.administrator.paint.funny.view.AddWordInsideLinearlayout",
+      "com.example.administrator.paint.funny.view.AddWordTextView"
+    ],
+    "usages": [
+      "com.example.administrator.paint.funny.view.AddWordOutsideLinearLayout",
+      "com.example.administrator.paint.funny.view.AddWordFrame"
+    ],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "android.support.graphics.drawable.animated",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "android.support.test",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "android.support.test.espresso",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  },
+  {
+    "packageName": "android.support.v7.appcompat",
+    "superClass": null,
+    "className": "R",
+    "associations": [],
+    "usages": [],
+    "interfaces": [],
+    "type": "CLASS"
+  }
+]
