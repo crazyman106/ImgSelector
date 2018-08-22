@@ -26,6 +26,7 @@ public class SampleView extends View {
     private Matrix mInverse = new Matrix();
     private Bitmap bm;
 
+
     private void setXY(float[] array, int index, float x, float y) {
         array[index * 2] = x;
         array[index * 2 + 1] = y;
