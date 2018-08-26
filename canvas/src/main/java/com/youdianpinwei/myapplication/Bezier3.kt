@@ -92,7 +92,7 @@ class Bezier3 @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
         canvas.translate(mCenterX.toFloat(), mCenterY.toFloat()) // 将坐标系移动到画布中央
         canvas.scale(1f, -1f)                 // 翻转Y轴
 
-        drawAuxiliaryLine(canvas)
+//        drawAuxiliaryLine(canvas)
 
 
         // 绘制贝塞尔曲线
@@ -119,7 +119,7 @@ class Bezier3 @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
             mCtrl[4] -= 20 / mCount
             mCtrl[10] += 20 / mCount
 
-            postInvalidateDelayed(mPiece.toLong())
+//            postInvalidateDelayed(mPiece.toLong())
         }
     }
 
@@ -180,6 +180,7 @@ class Bezier3 @JvmOverloads constructor(context: Context, attrs: AttributeSet? =
     }
 
     companion object {
+        //        0.551915024494f
         private val C = 0.551915024494f     // 一个常量，用来计算绘制圆形贝塞尔曲线控制点的位置
     }
 }
