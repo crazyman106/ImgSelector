@@ -2,6 +2,7 @@ package com.example.administrator.paint;
 
 import android.app.Activity;
 import android.util.DisplayMetrics;
+import android.widget.TextView;
 
 public final class MeasureUtil {
     /**
