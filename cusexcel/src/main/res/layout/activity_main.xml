@@ -9,7 +9,8 @@
     <com.example.cusexcel.view.TableView
         android:id="@+id/table"
         android:layout_width="360dp"
-        android:layout_height="200dp" />
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true" />
 
 
     <LinearLayout

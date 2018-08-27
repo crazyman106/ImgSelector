@@ -24,36 +24,57 @@ import java.util.List;
 
 /**
  * Description:表格控件
+ * Blog:https://blog.csdn.net/u010870167
+ * Creator:fengzi
  */
 public class TableView extends View {
 
-    /**
-     * 单元格基准宽度，设权重的情况下，为最小单元格宽度
-     */
+    // 单元格行列宽高
     private float columnWidth;
     private float rowHeight;
+    // 表格实际宽度(因为表格左上角和右下角有bitmap,所以会存在一定的padding值,它会导致width和view.withd不相同,width = view.width-2*padding)
     private float width, height;
 
-    private float dividerWidth;
+    /**
+     * // 存放表格所有单元格的内容
+     * 按照:
+     * A,B,C
+     * D,E,F
+     * G,H,I
+     * 这种顺序来存储
+     */
     private List<String> contentTxt = new ArrayList<>();
+    // 存储表格所有单元格的边界坐标
     private List<Rect> rects = new ArrayList<>();
+    // 存储表格内边界所有行列线段的坐标
     private List<LinePoint> linePoints = new ArrayList<>();
+    // 左上角删除图表的边界坐标
     private Rect rectDelIcon = new Rect();
+    // 右下角缩放图表的边界坐标
     private Rect rectControlIcon = new Rect();
+    // 删除图表,缩放图表
     private Bitmap delBitmap, controlBitmap;
-    private int padding = 50;
+    // view的padding,用来存放图片== math.max(bitmap.width/2)
+    private int padding = 0;
+    // 线宽度
     private int lineStrokeWidth = 3;
 
-    private float originalWidth, originalCenterX, originalCenterY, originalHeight;
-    private float screenHeight, screenWidth;
-    private float originalTopPadding;
+    // view的宽度,view的坐标中心点,用来缩放的时候使用
+    private float originalWidth, originalCenterX, originalCenterY;
+    // 屏幕宽度
+    private float screenWidth;
 
+    // 拉一个点击位置,rects.index
     private int lastClickPosition = -1;
 
+    // 行列数
     private int rowCount;
     private int columnCount;
 
+    // 文本,外边框,内边框画笔
     private Paint paintTxt, paintBorder, paintInsideLine;
+
+    // 虚线效果实现类
     DashPathEffect dashPathEffect;
 
 
@@ -88,18 +109,14 @@ public class TableView extends View {
 
         if (attrs != null) {
             TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.TableView);
-            dividerWidth = typedArray.getDimensionPixelSize(R.styleable.TableView_dividerWidth, 1);
             typedArray.recycle();
         } else {
-            dividerWidth = 1;
         }
         initTableSize();
         delBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_delete);
         controlBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_move);
-        padding = Math.min(delBitmap.getWidth(), controlBitmap.getWidth()) / 2;
-        screenHeight = ScreenUtils.getHeight(getContext());
+        padding = Math.max(delBitmap.getWidth(), controlBitmap.getWidth()) / 2;
         screenWidth = ScreenUtils.getWidth(getContext());
-        originalTopPadding = getTop();
     }
 
     private int count = 0;//点击次数
@@ -115,6 +132,7 @@ public class TableView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                // 每次点击的时候先判断手指是不是在删除图表和缩放图表边界内,是的话,直接执行删除和缩放操作
                 if (rectDelIcon.contains((int) event.getX(), (int) event.getY())) {
                     count = 0;
                     firstClick = 0;
@@ -134,10 +152,10 @@ public class TableView extends View {
                 }
                 count++;
                 if (1 == count) {
-                    firstClick = System.currentTimeMillis();//记录第一次点击时间
+                    firstClick = System.currentTimeMillis();//如果不是在删除和缩放图表边界内,记录第一次点击时间
                     for (int i = 0; i < rects.size(); i++) {
                         if (rects.get(i).contains((int) event.getX(), (int) event.getY())) {
-                            lastClickPosition = i;
+                            lastClickPosition = i;// 记录第一次点击表格位置
                             break;
                         }
                     }
@@ -146,13 +164,13 @@ public class TableView extends View {
                     if (secondClick - firstClick < totalTime) {//判断二次点击时间间隔是否在设定的间隔时间之内
                         for (int i = 0; i < rects.size(); i++) {
                             if (rects.get(i).contains((int) event.getX(), (int) event.getY()) && i == lastClickPosition) {
-                                if (rectDelIcon.contains((int) event.getX(), (int) event.getY())
+                                if (rectDelIcon.contains((int) event.getX(), (int) event.getY())// 如果第二次点击是在删除和缩放图标内,这段代码也不能够执行,可以删掉这个if条件,但是还是加上了,
                                         || rectControlIcon.contains((int) event.getX(), (int) event.getY())) {
                                     count = 0;
                                     firstClick = 0;
                                     lastClickPosition = -1;
                                     return super.onTouchEvent(event);
-                                } else {
+                                } else {// 二次点击和第一点击是在同一个位置,执行双击录入文本操作,UI通过OnDoubleClickListener来回调双击事件
                                     if (doubleClickListener != null && i == lastClickPosition) {
                                         doubleClickListener.onDoubleClick(i);
                                         lastClickPosition = -1;
@@ -175,14 +193,14 @@ public class TableView extends View {
                 break;
             case MotionEvent.ACTION_MOVE:
                 Log.e("move:", event.getX() + "--" + event.getY());
-                if (isCanScale) {
+                if (isCanScale) { // 执行缩放操作
                     setScaleX(scaleFactorX(event));
                     setScaleY(scaleFactorY(event));
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                isCanScale = false;
+                isCanScale = false;// 取消缩放
                 break;
             default:
                 break;
@@ -190,20 +208,7 @@ public class TableView extends View {
         return true;
     }
 
-    private void scale() {
-
-    }
-
-    float scale = 1f;
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            scale = scale - 0.01f;
-            setScaleX(scale);
-            postDelayed(runnable, 500);
-        }
-    };
-
+    // 在该函数中获取view的高宽,同时根据计算出表格的高宽,单元格的高宽,以及缩放时需要的一些参数
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -212,28 +217,23 @@ public class TableView extends View {
         //计算宽度及列宽
         width = w - padding * 2;
         height = h - padding * 2;
-        columnWidth = (width - 2 * dividerWidth) / columnCount;
-        rowHeight = (height - 2 * dividerWidth) / rowCount;
+        columnWidth = (width - 2 * lineStrokeWidth) / columnCount;
+        rowHeight = (height - 2 * lineStrokeWidth) / rowCount;
 
         originalWidth = w;
-        originalHeight = h;
         originalCenterX = w / 2;
         originalCenterY = h / 2;
     }
 
-    private void calculateFormLength() {
-        //未设置宽度，根据控件宽度来确定最小单元格宽度
-    }
-
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+        super.onDraw(canvas);//对表格和文本进行绘制
         setPadding(padding, padding, padding, padding);
-        drawBitmap(canvas);
-        calculateColumns();
-        drawFramework(canvas);
-        calculateRects();
-        drawContent(canvas);
+        drawBitmap(canvas);// 绘制bitmap
+        calculateColumns();// 计算表格内部行列线段的坐标
+        drawFramework(canvas);//绘制表格(外边框和内部线段)
+        calculateRects(); // 统计全部单元格的边界
+        drawContent(canvas);// 绘制文本
 
     }
 
@@ -243,7 +243,7 @@ public class TableView extends View {
     }
 
     private void calculateColumns() {
-        linePoints.clear();
+        linePoints.clear(); // 为了在增删行列的时候去掉上一次的内容,
         // 添加竖线
         LinePoint linePoint;
         for (int i = 1; i < columnCount; i++) {
@@ -272,7 +272,7 @@ public class TableView extends View {
         canvas.drawRect(padding, padding, width + padding, height + padding, paintBorder);
         Path path;
         LinePoint linePoint;
-        // 画竖线
+        // 画竖线,实际上可以通过drawLines()来一次画出全部数据,但是使用DashPathEffect对drawLines无效果,所以改用drawPath
         for (int i = 0; i < linePoints.size(); i++) {
             linePoint = linePoints.get(i);
             path = new Path();
@@ -283,9 +283,10 @@ public class TableView extends View {
     }
 
     /**
-     * 画内容
+     * 绘制文本
      */
     private void drawContent(Canvas canvas) {
+        Log.e("drawContent", contentTxt.size() + "--");
         for (int i = 0; i < columnCount * rowCount; i++) {
             canvas.drawText(contentTxt.get(i), (float) getTextStartX(i % columnCount * columnWidth, paintTxt, contentTxt.get(i)),
                     (float) getTextBaseLine(i / columnCount * rowHeight, paintTxt), paintTxt);
@@ -293,7 +294,7 @@ public class TableView extends View {
     }
 
     /**
-     * 初始化行列数
+     * 初始化行列数,设置初始化文本内容
      */
     private void initTableSize() {
         rowCount = 4;
@@ -307,25 +308,35 @@ public class TableView extends View {
         }
     }
 
+    /**
+     * 根据FontMetrics获取文本高度,通过单元格的高宽和文本的高度计算baseline
+     *
+     * @param rowStart
+     * @param paint
+     * @return
+     */
     private float getTextBaseLine(float rowStart, Paint paint) {
         final Paint.FontMetrics fontMetrics = paint.getFontMetrics();
         return (rowStart + (rowStart + rowHeight) - fontMetrics.bottom - fontMetrics.top) / 2 + padding;
     }
 
+    /**
+     * 根据getTextBounds来计算文本的宽度,通过单元格的宽度和文本宽度来计算文本开始绘制的位置,从而达到文本居中显示的效果
+     */
     private float getTextStartX(float columnStart, Paint paint, String content) {
         Rect rect = new Rect();
         paint.getTextBounds(content, 0, content.length(), rect);
-        if (TextUtils.isEmpty(content)) {
+        if (TextUtils.isEmpty(content)) {// 这个实际上可以不写,因为content为空的时候没有内容,所以不用居中显示
             return columnStart + 4 * paintBorder.getStrokeWidth() + padding;
         }
-        if (rect.width() > columnWidth) {
+        if (rect.width() > columnWidth) { // 文本宽度大于单元格的宽度,从单元格开始位置绘制文字
             return columnStart + 4 * paintBorder.getStrokeWidth() + padding;
-        } else {
+        } else {// 计算居中显示时绘制文本的开始位置
             return columnStart + (columnWidth - rect.width()) / 2 + padding;
         }
     }
 
-    // 统计表格Rect
+    // 统计表格Rect,用来判断点击的表格位置
     private void calculateRects() {
         rects.clear();
         Rect rect;
@@ -339,11 +350,13 @@ public class TableView extends View {
         }
     }
 
+    // 给制定的表格设置内容
     public void setContent(int index, String content) {
         contentTxt.set(index, content);
         invalidate();
     }
 
+    // 双击监听事件
     public interface OnDoubleClickListener {
         void onDoubleClick(int index);
     }
@@ -355,6 +368,8 @@ public class TableView extends View {
         this.doubleClickListener = doubleClickListener;
     }
 
+    // 删除监听事件
+    // 可以把OnDelClickListener和OnDoubleClickListener合成一个
     public interface OnDelClickListener {
         void onDelView();
     }
@@ -365,33 +380,52 @@ public class TableView extends View {
         this.delClickListener = delClickListener;
     }
 
+    // 添加列
     public void addColumn() {
+        // 最多8列
         if (columnCount == 8) {
             Toast.makeText(getContext(), "最多可以设置8列", Toast.LENGTH_SHORT).show();
             return;
         }
         columnCount += 1;
+        // 增加一列的时候是给最右边增加的,所以我们要给相对应的位置添加内容,内容为空
         for (int i = 1; i < columnCount * rowCount + 1; i++) {
             if (i % columnCount == 0) {
                 contentTxt.add(i - 1, "");
             }
         }
-        columnWidth = (width - 2 * dividerWidth) / columnCount;
+        // 重新计算单元格列宽
+        columnWidth = (width - 2 * lineStrokeWidth) / columnCount;
         invalidate();
     }
 
+    /**
+     * 列-1
+     */
     public void subtractColumn() {
+        // 如果列==1的情况下,不允许在减
+        if (columnCount == 1) {
+            return;
+        }
         columnCount -= 1;
         int pos = contentTxt.size();
-        for (int i = pos; i > 0; i--) {
-            if (i % rowCount == 0) {
-                contentTxt.remove(i - 1);
+        if (rowCount != 1) {
+            for (int i = pos; i > 0; i--) {// 循环减少最后一列对应的content
+                if (i % rowCount == 0) {
+                    contentTxt.remove(i - 1);
+                }
             }
+        } else {// 如果行==1的话,减少最后一列,同时contentTxt也减少最后一个
+            contentTxt.remove(pos - 1);
         }
-        columnWidth = (width - 2 * dividerWidth) / columnCount;
+        // 从新计算单元格列宽
+        columnWidth = (width - 2 * lineStrokeWidth) / columnCount;
         invalidate();
     }
 
+    /**
+     * 增加行
+     */
     public void addRow() {
         if (rowCount == 8) {
             Toast.makeText(getContext(), "最多可以设置8行", Toast.LENGTH_SHORT).show();
@@ -401,19 +435,26 @@ public class TableView extends View {
         for (int i = 0; i < columnCount; i++) {
             contentTxt.add("");
         }
-        rowHeight = (height - 2 * dividerWidth) / rowCount;
+        rowHeight = (height - 2 * lineStrokeWidth) / rowCount;
         invalidate();
     }
 
+    /**
+     * 减少行
+     */
     public void subtractRow() {
+        if (rowCount == 1) {
+            return;
+        }
         rowCount -= 1;
         for (int i = 0; i < columnCount; i++) {
             contentTxt.remove(contentTxt.size() - 1);
         }
-        rowHeight = (height - 2 * dividerWidth) / rowCount;
+        rowHeight = (height - 2 * lineStrokeWidth) / rowCount;
         invalidate();
     }
 
+    // 这是表格的line样式和宽度
     public void setOuterFull(boolean isBolb) {
         if (isBolb) {
             lineStrokeWidth = 5;
@@ -458,6 +499,11 @@ public class TableView extends View {
         invalidate();
     }
 
+    /**
+     * 设置表格line的色值
+     *
+     * @param color
+     */
     public void setOuterColor(int color) {
         paintBorder.setColor(color);
         invalidate();
@@ -468,10 +514,12 @@ public class TableView extends View {
         invalidate();
     }
 
+    // 获取x轴上缩放因子,即缩放比例
     private float scaleFactorX(MotionEvent event) {
         return (event.getRawX() - (screenWidth - originalWidth) / 2 - originalCenterX) / originalCenterX;
     }
 
+    // 获取y轴上缩放因子,即缩放比例
     private float scaleFactorY(MotionEvent event) {
         return (event.getRawY() - getTop() - ScreenUtils.getStatusBarHeight(getContext())) / originalCenterY - 1f;
     }
