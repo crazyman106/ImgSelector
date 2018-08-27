@@ -21,10 +21,7 @@ public class ImageAdapter extends BaseAdapter {
 
     public ImageAdapter(Context context) {
         this.context = context;
-        imgRess.add(R.drawable.full_line_1);
-        imgRess.add(R.drawable.full_line_2);
-        imgRess.add(R.drawable.dashed_line_1);
-        imgRess.add(R.drawable.dashed_line_2);
+
     }
 
     @Override

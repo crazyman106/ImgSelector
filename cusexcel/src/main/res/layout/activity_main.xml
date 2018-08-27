@@ -1,33 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootview"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingTop="54dp">
+
 
     <com.example.cusexcel.view.TableView
         android:id="@+id/table"
         android:layout_width="360dp"
-        android:layout_height="200dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="54dp"
-        app:dividerColor="#e1e1e1"
-        app:dividerWidth="1px"
-        app:headerColor="#00ffffff"
-        app:headerTextColor="#111111"
-        app:headerTextSize="10dp"
-        app:rowHeight="36dp"
-        app:textColor="#999999"
-        app:textSize="10dp"
-        app:unitColumnWidth="0dp" />
+        android:layout_height="200dp" />
 
 
     <LinearLayout
         android:id="@+id/row"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_below="@id/table"
+
         android:layout_marginLeft="36dp"
-        android:layout_marginTop="18dp">
+        android:layout_marginTop="218dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -72,7 +63,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="16dp"
             android:gravity="center"
-            android:text="添加" />
+            android:text="添加新表格" />
     </LinearLayout>
 
     <LinearLayout
@@ -136,11 +127,12 @@
             android:textSize="13sp" />
 
 
-        <Spinner
+        <TextView
             android:id="@+id/innerLine"
             android:layout_width="120dp"
             android:layout_height="match_parent"
-            android:spinnerMode="dropdown" />
+            android:gravity="center"
+            android:text="inner" />
 
         <RadioGroup
             android:id="@+id/inner_color"
@@ -190,11 +182,12 @@
             android:text="表格外框:"
             android:textSize="13sp" />
 
-        <Spinner
+        <TextView
             android:id="@+id/outline"
             android:layout_width="120dp"
             android:layout_height="match_parent"
-            android:spinnerMode="dropdown" />
+            android:gravity="center"
+            android:text="outer" />
 
         <RadioGroup
             android:id="@+id/out_color"

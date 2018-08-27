@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#55999999"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="#ffffff"
+        android:gravity="right">
+
+        <TextView
+            android:id="@+id/datermine"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:text="Datermine" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/line1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="72dp"
+        android:layout_marginTop="22dp"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:src="@drawable/full_line_2"
+        android:tint="#888888" />
+
+    <ImageView
+        android:id="@+id/line2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="72dp"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:src="@drawable/full_line_1"
+        android:tint="#888888" />
+
+
+    <ImageView
+        android:id="@+id/line3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="72dp"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:src="@drawable/dashed_line_1"
+        android:tint="#888888" />
+
+    <ImageView
+        android:id="@+id/line4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="72dp"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:src="@drawable/dashed_line_2"
+        android:tint="#888888" />
+</LinearLayout>

@@ -9,14 +9,13 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.cusexcel.R;
 
@@ -36,9 +35,6 @@ public class TableView extends View {
     private float width, height;
 
     private float dividerWidth;
-    private int dividerColor;
-    private float textSize;
-    private int textColor;
     private List<String> contentTxt = new ArrayList<>();
     private List<Rect> rects = new ArrayList<>();
     private List<LinePoint> linePoints = new ArrayList<>();
@@ -47,6 +43,12 @@ public class TableView extends View {
     private Bitmap delBitmap, controlBitmap;
     private int padding = 50;
     private int lineStrokeWidth = 3;
+
+    private float originalWidth, originalCenterX, originalCenterY, originalHeight;
+    private float screenHeight, screenWidth;
+    private float originalTopPadding;
+
+    private int lastClickPosition = -1;
 
     private int rowCount;
     private int columnCount;
@@ -87,39 +89,17 @@ public class TableView extends View {
         if (attrs != null) {
             TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.TableView);
             dividerWidth = typedArray.getDimensionPixelSize(R.styleable.TableView_dividerWidth, 1);
-            dividerColor = typedArray.getColor(R.styleable.TableView_dividerColor, Color.parseColor("#E1E1E1"));
-            textSize = typedArray.getDimensionPixelSize(R.styleable.TableView_textSize, Util.dip2px(getContext(), 10));
-            textColor = typedArray.getColor(R.styleable.TableView_textColor, Color.parseColor("#999999"));
             typedArray.recycle();
         } else {
             dividerWidth = 1;
-            dividerColor = Color.parseColor("#E1E1E1");
-            textSize = Util.dip2px(getContext(), 10);
-            textColor = Color.parseColor("#999999");
         }
         initTableSize();
-       /* setOnTouchListener(new com.example.cusexcel.view.OnDoubleClickListener(new com.example.cusexcel.view.OnDoubleClickListener.DoubleClickCallback() {
-            @Override
-            public void onDoubleClick(MotionEvent event) {
-                for (int i = 0; i < rects.size(); i++) {
-                    if (rects.get(i).contains((int) event.getX(), (int) event.getY())) {
-                        if (rectDelIcon.contains((int) event.getX(), (int) event.getY()) || rectControlIcon.contains((int) event.getX(), (int) event.getY())) {
-                            return;
-                        }
-                        if (doubleClickListener != null) {
-                            doubleClickListener.onDoubleClick(i);
-                            Log.e("doubleclick", i + "");
-                        }
-                        break;
-                    }
-                }
-                invalidate();
-            }
-        }));*/
-
         delBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_delete);
         controlBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_move);
         padding = Math.min(delBitmap.getWidth(), controlBitmap.getWidth()) / 2;
+        screenHeight = ScreenUtils.getHeight(getContext());
+        screenWidth = ScreenUtils.getWidth(getContext());
+        originalTopPadding = getTop();
     }
 
     private int count = 0;//点击次数
@@ -128,43 +108,101 @@ public class TableView extends View {
     /**
      * 两次点击时间间隔，单位毫秒
      */
-    private final int totalTime = 1000;
+    private final int totalTime = 800;
+    private boolean isCanScale = false;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (MotionEvent.ACTION_DOWN == event.getAction()) {//按下
-            count++;
-            if (1 == count) {
-                firstClick = System.currentTimeMillis();//记录第一次点击时间
-            } else if (2 == count) {
-                secondClick = System.currentTimeMillis();//记录第二次点击时间
-                if (secondClick - firstClick < totalTime) {//判断二次点击时间间隔是否在设定的间隔时间之内
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (rectDelIcon.contains((int) event.getX(), (int) event.getY())) {
+                    count = 0;
+                    firstClick = 0;
+                    lastClickPosition = -1;
+                    if (delClickListener != null) {
+                        delClickListener.onDelView();
+                    }
+                    return true;
+                }
+                if (rectControlIcon.contains((int) event.getX(), (int) event.getY())) {
+                    count = 0;
+                    firstClick = 0;
+                    secondClick = 0;
+                    lastClickPosition = -1;
+                    isCanScale = true;
+                    break;
+                }
+                count++;
+                if (1 == count) {
+                    firstClick = System.currentTimeMillis();//记录第一次点击时间
                     for (int i = 0; i < rects.size(); i++) {
                         if (rects.get(i).contains((int) event.getX(), (int) event.getY())) {
-                            if (rectDelIcon.contains((int) event.getX(), (int) event.getY()) || rectControlIcon.contains((int) event.getX(), (int) event.getY())) {
-                                count = 0;
-                                firstClick = 0;
-                                return super.onTouchEvent(event);
-                            }
-                            if (doubleClickListener != null) {
-                                doubleClickListener.onDoubleClick(i);
-                                Log.e("doubleclick", i + "");
-                            }
+                            lastClickPosition = i;
                             break;
                         }
                     }
-                    invalidate();
-                    count = 0;
-                    firstClick = 0;
-                } else {
-                    firstClick = secondClick;
-                    count = 1;
+                } else if (2 == count) {
+                    secondClick = System.currentTimeMillis();//记录第二次点击时间
+                    if (secondClick - firstClick < totalTime) {//判断二次点击时间间隔是否在设定的间隔时间之内
+                        for (int i = 0; i < rects.size(); i++) {
+                            if (rects.get(i).contains((int) event.getX(), (int) event.getY()) && i == lastClickPosition) {
+                                if (rectDelIcon.contains((int) event.getX(), (int) event.getY())
+                                        || rectControlIcon.contains((int) event.getX(), (int) event.getY())) {
+                                    count = 0;
+                                    firstClick = 0;
+                                    lastClickPosition = -1;
+                                    return super.onTouchEvent(event);
+                                } else {
+                                    if (doubleClickListener != null && i == lastClickPosition) {
+                                        doubleClickListener.onDoubleClick(i);
+                                        lastClickPosition = -1;
+                                        Log.e("doubleclick", i + "");
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        invalidate();
+                        count = 0;
+                        firstClick = 0;
+                    } else {
+                        firstClick = secondClick;
+                        count = 1;
+                        lastClickPosition = -1;
+                    }
+                    secondClick = 0;
                 }
-                secondClick = 0;
-            }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Log.e("move:", event.getX() + "--" + event.getY());
+                if (isCanScale) {
+                    setScaleX(scaleFactorX(event));
+                    setScaleY(scaleFactorY(event));
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                isCanScale = false;
+                break;
+            default:
+                break;
         }
         return true;
     }
+
+    private void scale() {
+
+    }
+
+    float scale = 1f;
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            scale = scale - 0.01f;
+            setScaleX(scale);
+            postDelayed(runnable, 500);
+        }
+    };
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -176,6 +214,11 @@ public class TableView extends View {
         height = h - padding * 2;
         columnWidth = (width - 2 * dividerWidth) / columnCount;
         rowHeight = (height - 2 * dividerWidth) / rowCount;
+
+        originalWidth = w;
+        originalHeight = h;
+        originalCenterX = w / 2;
+        originalCenterY = h / 2;
     }
 
     private void calculateFormLength() {
@@ -191,6 +234,7 @@ public class TableView extends View {
         drawFramework(canvas);
         calculateRects();
         drawContent(canvas);
+
     }
 
     private void drawBitmap(Canvas canvas) {
@@ -306,11 +350,26 @@ public class TableView extends View {
 
     private OnDoubleClickListener doubleClickListener;
 
+
     public void setOnDoubleClickListener(OnDoubleClickListener doubleClickListener) {
         this.doubleClickListener = doubleClickListener;
     }
 
+    public interface OnDelClickListener {
+        void onDelView();
+    }
+
+    private OnDelClickListener delClickListener;
+
+    public void setOnDelClickListener(OnDelClickListener delClickListener) {
+        this.delClickListener = delClickListener;
+    }
+
     public void addColumn() {
+        if (columnCount == 8) {
+            Toast.makeText(getContext(), "最多可以设置8列", Toast.LENGTH_SHORT).show();
+            return;
+        }
         columnCount += 1;
         for (int i = 1; i < columnCount * rowCount + 1; i++) {
             if (i % columnCount == 0) {
@@ -334,6 +393,10 @@ public class TableView extends View {
     }
 
     public void addRow() {
+        if (rowCount == 8) {
+            Toast.makeText(getContext(), "最多可以设置8行", Toast.LENGTH_SHORT).show();
+            return;
+        }
         rowCount += 1;
         for (int i = 0; i < columnCount; i++) {
             contentTxt.add("");
@@ -351,30 +414,46 @@ public class TableView extends View {
         invalidate();
     }
 
-    public void setOuterFull() {
+    public void setOuterFull(boolean isBolb) {
+        if (isBolb) {
+            lineStrokeWidth = 5;
+        } else {
+            lineStrokeWidth = 3;
+        }
         paintBorder.setPathEffect(null);
-        lineStrokeWidth = 5;
         paintBorder.setStrokeWidth(lineStrokeWidth);
         invalidate();
     }
 
-    public void setOuterDash() {
+    public void setOuterDash(boolean isBolb) {
+        if (isBolb) {
+            lineStrokeWidth = 5;
+        } else {
+            lineStrokeWidth = 3;
+        }
         paintBorder.setPathEffect(dashPathEffect);
-        lineStrokeWidth = 5;
         paintBorder.setStrokeWidth(lineStrokeWidth);
         invalidate();
     }
 
-    public void setInnerFull() {
+    public void setInnerFull(boolean isBolb) {
+        if (isBolb) {
+            lineStrokeWidth = 5;
+        } else {
+            lineStrokeWidth = 3;
+        }
         paintInsideLine.setPathEffect(null);
-        lineStrokeWidth = 5;
         paintInsideLine.setStrokeWidth(lineStrokeWidth);
         invalidate();
     }
 
-    public void setInnerDash() {
+    public void setInnerDash(boolean isBolb) {
+        if (isBolb) {
+            lineStrokeWidth = 5;
+        } else {
+            lineStrokeWidth = 3;
+        }
         paintInsideLine.setPathEffect(dashPathEffect);
-        lineStrokeWidth = 5;
         paintInsideLine.setStrokeWidth(lineStrokeWidth);
         invalidate();
     }
@@ -388,5 +467,15 @@ public class TableView extends View {
         paintInsideLine.setColor(color);
         invalidate();
     }
+
+    private float scaleFactorX(MotionEvent event) {
+        return (event.getRawX() - (screenWidth - originalWidth) / 2 - originalCenterX) / originalCenterX;
+    }
+
+    private float scaleFactorY(MotionEvent event) {
+        return (event.getRawY() - getTop() - ScreenUtils.getStatusBarHeight(getContext())) / originalCenterY - 1f;
+    }
+
+
 }
 
