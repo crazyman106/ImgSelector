@@ -121,26 +121,25 @@ public class TableView extends View {
     private int count = 0;//点击次数
     private long firstClick = 0;//第一次点击时间
     private long secondClick = 0;//第二次点击时间
+
+    private long lastClickTime = 0;
     /**
      * 两次点击时间间隔，单位毫秒
      */
     private final int totalTime = 800;
     private boolean isCanScale = false;
 
+    private float downX, downY;
+    private boolean isCanTranslate = false;
+
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                downX = event.getX();
+                downY = event.getY();
                 // 每次点击的时候先判断手指是不是在删除图表和缩放图表边界内,是的话,直接执行删除和缩放操作
-                if (rectDelIcon.contains((int) event.getX(), (int) event.getY())) {
-                    count = 0;
-                    firstClick = 0;
-                    lastClickPosition = -1;
-                    if (delClickListener != null) {
-                        delClickListener.onDelView();
-                    }
-                    return true;
-                }
                 if (rectControlIcon.contains((int) event.getX(), (int) event.getY())) {
                     count = 0;
                     firstClick = 0;
@@ -149,63 +148,94 @@ public class TableView extends View {
                     isCanScale = true;
                     break;
                 }
+                // 删除操作
+                if (rectDelIcon.contains((int) event.getX(), (int) event.getY())) {
+                    count = 0;
+                    firstClick = 0;
+                    lastClickPosition = -1;
+                    if (delClickListener != null) {
+                        delClickListener.onDelView();
+                    }
+                    break;
+                }
+                isCanTranslate = true;
                 count++;
-                if (1 == count) {
-                    firstClick = System.currentTimeMillis();//如果不是在删除和缩放图表边界内,记录第一次点击时间
+                // 第一次按下谈起时间,既第一次点击事件
+                if (count == 1) {
+                    lastClickTime = System.currentTimeMillis();//如果不是在删除和缩放图表边界内,记录第一次点击时间
                     for (int i = 0; i < rects.size(); i++) {
                         if (rects.get(i).contains((int) event.getX(), (int) event.getY())) {
                             lastClickPosition = i;// 记录第一次点击表格位置
-                            break;
+                            return true;
                         }
                     }
-                } else if (2 == count) {
-                    secondClick = System.currentTimeMillis();//记录第二次点击时间
-                    if (secondClick - firstClick < totalTime) {//判断二次点击时间间隔是否在设定的间隔时间之内
+                } else if (count == 2) {
+                    long offsetTime = System.currentTimeMillis() - lastClickTime;
+                    Log.e("doubleClickListener", event.getX() + "--" + event.getY() + ";" + lastClickPosition + "--" + count);
+                    if (offsetTime < totalTime) {
+                        count = 0;
                         for (int i = 0; i < rects.size(); i++) {
                             if (rects.get(i).contains((int) event.getX(), (int) event.getY()) && i == lastClickPosition) {
-                                if (rectDelIcon.contains((int) event.getX(), (int) event.getY())// 如果第二次点击是在删除和缩放图标内,这段代码也不能够执行,可以删掉这个if条件,但是还是加上了,
-                                        || rectControlIcon.contains((int) event.getX(), (int) event.getY())) {
-                                    count = 0;
-                                    firstClick = 0;
+                                if (doubleClickListener != null && i == lastClickPosition) {
+                                    doubleClickListener.onDoubleClick(i);
                                     lastClickPosition = -1;
-                                    return super.onTouchEvent(event);
-                                } else {// 二次点击和第一点击是在同一个位置,执行双击录入文本操作,UI通过OnDoubleClickListener来回调双击事件
-                                    if (doubleClickListener != null && i == lastClickPosition) {
-                                        doubleClickListener.onDoubleClick(i);
-                                        lastClickPosition = -1;
-                                        Log.e("doubleclick", i + "");
-                                        break;
-                                    }
+                                    lastClickTime = 0;
+                                    isCanTranslate = false;
+                                    return true;
                                 }
+                                isCanTranslate = true;
+                                lastClickTime = 0;
+                                lastClickPosition = -1;
+                            }
+                            // 如果第二次点击是在删除和缩放图标内,这段代码也不能够执行,可以删掉这个if条件,但是还是加上了,
+                            if (rectDelIcon.contains((int) event.getX(), (int) event.getY())
+                                    || rectControlIcon.contains((int) event.getX(), (int) event.getY())) {
+                                lastClickPosition = -1;
+                                lastClickTime = 0;
+                                isCanTranslate = false;
+                                return true;
                             }
                         }
-                        invalidate();
-                        count = 0;
-                        firstClick = 0;
                     } else {
-                        firstClick = secondClick;
-                        count = 1;
                         lastClickPosition = -1;
+                        lastClickTime = 0;
+                        count = 0;
+                        isCanTranslate = true;
                     }
-                    secondClick = 0;
+                    isCanTranslate = true;
+                    count = 0;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.e("move:", event.getX() + "--" + event.getY());
                 if (isCanScale) { // 执行缩放操作
                     setScaleX(scaleFactorX(event));
                     setScaleY(scaleFactorY(event));
+                }
+                if (isCanTranslate) {
+                    final float xDistance = event.getX() - downX;
+                    final float yDistance = event.getY() - downY;
+                    l = (int) (getLeft() + xDistance);
+                    r = l + getWidth();
+                    t = (int) (getTop() + yDistance);
+                    b = t + getHeight();
+                    this.layout(l, t, r, b);
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 isCanScale = false;// 取消缩放
+                isCanTranslate = false;
+                downX = -1;
+                downY = -1;
                 break;
             default:
                 break;
         }
         return true;
     }
+
+    private int l, r, t, b;
+
 
     // 在该函数中获取view的高宽,同时根据计算出表格的高宽,单元格的高宽,以及缩放时需要的一些参数
     @Override
@@ -222,6 +252,7 @@ public class TableView extends View {
         originalWidth = w;
         originalCenterX = w / 2;
         originalCenterY = h / 2;
+        Log.e("onSizeChanged", originalCenterX + "--" + originalCenterY);
     }
 
     @Override
@@ -346,6 +377,7 @@ public class TableView extends View {
             rect.right = (int) (i % columnCount * columnWidth + columnWidth + padding);
             rect.bottom = (int) (i / columnCount * rowHeight + rowHeight + padding);
             rects.add(rect);
+            Log.e("calculateRects", rect.toShortString());
         }
     }
 
