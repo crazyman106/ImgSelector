@@ -11,7 +11,9 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.example.cusexcel.view.ActionSheetDialog
+import com.example.cusexcel.view.InputDialog
 import com.example.cusexcel.view.TableView
 import com.example.cusexcel.view.Util
 import kotlinx.android.synthetic.main.activity_main.*
@@ -100,29 +102,33 @@ class MainActivity : AppCompatActivity() {
 
         // 双击,edittext获取焦点,弹出软键盘,录入文本内容
         tableview.setOnDoubleClickListener {
-            input.visibility = View.VISIBLE
-            input.setFocusable(true)
+            InputDialog(this@MainActivity).builder().show()
+          /*  input.visibility = View.VISIBLE
+            Toast.makeText(this@MainActivity,"双击",Toast.LENGTH_LONG).show();*/
+          /*  input.setFocusable(true)
             input.isFocusableInTouchMode = true;
-            input.requestFocus()
-            if (imm == null) {
+            input.requestFocus()*/
+          /*  if (imm == null) {
                 imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             }
-            imm!!.showSoftInput(input, 0)
-            curClickPosition = it;
+            imm!!.showSoftInput(input, 0)*/
+//            curClickPosition = it;
+
+
         }
 
         // 把Edittext的imeOptions属性设置成actionDone,对应EditorInfo.IME_ACTION_DONE
         // Edittext的右下角action点击监听
-        input.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+      /*  input.setOnEditorActionListener(object : TextView.OnEditorActionListener {
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 var handled = false
                 if (actionId === EditorInfo.IME_ACTION_DONE) {
                     handled = true
-                    /*隐藏软键盘*/
-                    val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    *//*隐藏软键盘*//*
+                  *//*  val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     if (inputMethodManager.isActive) {
                         inputMethodManager.hideSoftInputFromWindow(this@MainActivity.currentFocus!!.windowToken, 0)
-                    }
+                    }*//*
                     // 根据我们点击的表格位置来输入内容.
                     if (curClickPosition != -1) {
                         tableview.setContent(curClickPosition!!, input.text.toString());
@@ -130,12 +136,12 @@ class MainActivity : AppCompatActivity() {
                     }
                     input.visibility = View.GONE
                     input.setText("")
-                    imm!!.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+//                    imm!!.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
 
                 }
                 return handled
             }
-        })
+        })*/
 
         // 行+1
         row_add.setOnClickListener { tableview.addRow() }
