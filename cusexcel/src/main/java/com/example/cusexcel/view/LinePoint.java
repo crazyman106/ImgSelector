@@ -5,6 +5,13 @@ package com.example.cusexcel.view;
  */
 
 public class LinePoint {
+    // 线段的开始和结束坐标
+    /**
+     * line.moveTo(x1,y1)
+     * line.lineTo(x2,y2)
+     * <p>
+     * 一个LinePoint对象代表一条线段
+     */
     private float x1, y1, x2, y2;
 
     public float getX1() {

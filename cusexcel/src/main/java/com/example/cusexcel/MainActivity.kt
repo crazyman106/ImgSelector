@@ -12,7 +12,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.example.cusexcel.view.ActionSheetDialog
-import com.example.cusexcel.view.MoreMenuPop
 import com.example.cusexcel.view.TableView
 import com.example.cusexcel.view.Util
 import kotlinx.android.synthetic.main.activity_main.*
@@ -21,8 +20,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     private var curClickPosition: Int? = -1;
-    var outPou: MoreMenuPop? = null;
-    var innerPou: MoreMenuPop? = null;
     var actionSheetDialog: ActionSheetDialog? = null;
     var type: Int? = -1;// 0:表示内边框;1:表示外边框
     var tableView: TableView? = null;
@@ -31,14 +28,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        outPou = MoreMenuPop(this@MainActivity)
-        innerPou = MoreMenuPop(this@MainActivity)
-
         actionSheetDialog = ActionSheetDialog(this@MainActivity).builder()
 
+        // 设置表格点击删除,按下缩放,双击文本录入,以及其他属性和函数.
         tableSetting(table)
 
+        // 为了删除后手动添加原始表格,直接创建对象,将gravity和宽高等属性通过LayoutParams来设置.
         add_form.setOnClickListener {
+            // 为了防止重复添加表格
             if (tableView != null) {
                 rootview.removeViewAt(0);
                 rootview.requestLayout()
@@ -49,19 +46,21 @@ class MainActivity : AppCompatActivity() {
             var layoutParams: RelativeLayout.LayoutParams = tableView?.layoutParams as RelativeLayout.LayoutParams;
             layoutParams.height = Util.dip2px(this@MainActivity, 200f)
             layoutParams.width = Util.dip2px(this@MainActivity, 360f)
+            layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
             tableSetting(tableView!!)
         }
     }
 
 
     fun tableSetting(tableview: TableView) {
+        // 给外边框和内边框设置line样式(不同粗细的直线和间隔线)
         actionSheetDialog?.setOnLineClickListener {
-            when (it) {
+            when (it) { // it:分别表示四条不同的线段
                 1 -> {
-                    if (type == 1) {
-                        tableview.setOuterFull(false)
+                    if (type == 1) {//0:表示内边框;1:表示外边框
+                        tableview.setOuterFull(false)// 设置外边框直线,flag:是否加粗,false:不加粗;true:加粗
                     } else if (type == 0) {
-                        tableview.setInnerFull(false)
+                        tableview.setInnerFull(false)// 设置框内直线,flag:是否加粗
                     }
                 }
                 2 -> {
@@ -73,9 +72,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 3 -> {
                     if (type == 1) {
-                        tableview.setOuterDash(false)
+                        tableview.setOuterDash(false)// 设置外边框间隔线,flag:是否加粗,false:不加粗;true:加粗
                     } else if (type == 0) {
-                        tableview.setInnerDash(false)
+                        tableview.setInnerDash(false)// 设置框内间隔线,flag:是否加粗
                     }
                 }
                 4 -> {
@@ -87,6 +86,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // 点击选择线的样式:
         outline.setOnClickListener {
             actionSheetDialog?.show();
             type = 1;
@@ -97,6 +98,7 @@ class MainActivity : AppCompatActivity() {
             type = 0;
         }
 
+        // 双击,edittext获取焦点,弹出软键盘,录入文本内容
         tableview.setOnDoubleClickListener {
             input.visibility = View.VISIBLE
             input.setFocusable(true)
@@ -109,6 +111,8 @@ class MainActivity : AppCompatActivity() {
             curClickPosition = it;
         }
 
+        // 把Edittext的imeOptions属性设置成actionDone,对应EditorInfo.IME_ACTION_DONE
+        // Edittext的右下角action点击监听
         input.setOnEditorActionListener(object : TextView.OnEditorActionListener {
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 var handled = false
@@ -119,6 +123,7 @@ class MainActivity : AppCompatActivity() {
                     if (inputMethodManager.isActive) {
                         inputMethodManager.hideSoftInputFromWindow(this@MainActivity.currentFocus!!.windowToken, 0)
                     }
+                    // 根据我们点击的表格位置来输入内容.
                     if (curClickPosition != -1) {
                         tableview.setContent(curClickPosition!!, input.text.toString());
                         Log.e("OnEditorAction", input.text.toString() + "");
@@ -132,14 +137,16 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        // 行+1
         row_add.setOnClickListener { tableview.addRow() }
-
+        // 行-1
         row_subtract.setOnClickListener { tableview.subtractRow() }
-
+        // 列+1
         column_add.setOnClickListener { tableview.addColumn() }
-
+        // 列-1
         column_subtract.setOnClickListener { tableview.subtractColumn() }
 
+        // 给表格的外边框设置色值
         out_color.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.out_dark_black -> {
@@ -153,7 +160,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
+        // 给表格的内边框设置色值
         inner_color.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.inner_dark_black -> {
@@ -167,6 +174,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        // 删除表格
         tableview.setOnDelClickListener {
             rootview.removeViewAt(0);
             rootview.requestLayout()
