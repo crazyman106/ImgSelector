@@ -7,8 +7,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -116,6 +118,7 @@ public class TableView extends View {
         controlBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_move);
         padding = Math.max(delBitmap.getWidth(), controlBitmap.getWidth()) / 2;
         screenWidth = ScreenUtils.getWidth(getContext());
+        scaleMatrix = new Matrix();
     }
 
     private int count = 0;//点击次数
@@ -132,11 +135,14 @@ public class TableView extends View {
     private float downX, downY;
     private boolean isCanTranslate = false;
 
+    private float lastDownX, lastDownY;
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                Log.e("scaleFactor", event.getRawY() + "");
                 downX = event.getX();
                 downY = event.getY();
                 // 每次点击的时候先判断手指是不是在删除图表和缩放图表边界内,是的话,直接执行删除和缩放操作
@@ -163,6 +169,7 @@ public class TableView extends View {
                 // 第一次按下谈起时间,既第一次点击事件
                 if (count == 1) {
                     lastClickTime = System.currentTimeMillis();//如果不是在删除和缩放图表边界内,记录第一次点击时间
+                    Log.e("onClick", "onCLick1");
                     for (int i = 0; i < rects.size(); i++) {
                         if (rects.get(i).contains((int) event.getX(), (int) event.getY())) {
                             lastClickPosition = i;// 记录第一次点击表格位置
@@ -170,17 +177,20 @@ public class TableView extends View {
                         }
                     }
                 } else if (count == 2) {
+                    Log.e("onClick", "onCLick2");
+
                     long offsetTime = System.currentTimeMillis() - lastClickTime;
-                    Log.e("doubleClickListener", event.getX() + "--" + event.getY() + ";" + lastClickPosition + "--" + count);
                     if (offsetTime < totalTime) {
                         count = 0;
                         for (int i = 0; i < rects.size(); i++) {
                             if (rects.get(i).contains((int) event.getX(), (int) event.getY()) && i == lastClickPosition) {
                                 if (doubleClickListener != null && i == lastClickPosition) {
                                     doubleClickListener.onDoubleClick(i);
+                                    Log.e("doubleClickListener", event.getX() + "--" + event.getY() + ";" + lastClickPosition + "--" + count);
                                     lastClickPosition = -1;
                                     lastClickTime = 0;
                                     isCanTranslate = false;
+                                    count = 0;
                                     return true;
                                 }
                                 isCanTranslate = true;
@@ -205,11 +215,24 @@ public class TableView extends View {
                     isCanTranslate = true;
                     count = 0;
                 }
+                lastDownX = event.getRawX();
+                lastDownY = event.getRawY();
                 break;
             case MotionEvent.ACTION_MOVE:
+                lastClickPosition = -1;
+                lastClickTime = 0;
+                count = 0;
                 if (isCanScale) { // 执行缩放操作
-                    setScaleX(scaleFactorX(event));
-                    setScaleY(scaleFactorY(event));
+                   /* setScaleX(scaleFactorX(event));
+                    setScaleY(scaleFactorY(event));*/
+                    final float xDistance = event.getRawX() - lastDownX;
+                    final float yDistance = event.getRawY() - lastDownY;
+                    scaleX += xDistance / getWidth();
+                    scaleY += yDistance / getHeight();
+                    setScaleX(scaleX);
+                    setScaleY(scaleY);
+                    lastDownX = event.getRawX();
+                    lastDownY = event.getRawY();
                 }
                 if (isCanTranslate) {
                     final float xDistance = event.getX() - downX;
@@ -232,6 +255,21 @@ public class TableView extends View {
                 break;
         }
         return true;
+    }
+
+    private float scaleX = 1f, scaleY = 1f;
+
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        getParent().requestDisallowInterceptTouchEvent(true);
+        return super.dispatchTouchEvent(event);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+
+        super.onLayout(changed, left, top, right, bottom);
     }
 
     private int l, r, t, b;
@@ -264,13 +302,14 @@ public class TableView extends View {
         drawFramework(canvas);//绘制表格(外边框和内部线段)
         calculateRects(); // 统计全部单元格的边界
         drawContent(canvas);// 绘制文本
-
     }
 
     private void drawBitmap(Canvas canvas) {
         canvas.drawBitmap(delBitmap, 0, 0, paintTxt);
         canvas.drawBitmap(controlBitmap, getWidth() - controlBitmap.getWidth(), getHeight() - controlBitmap.getHeight(), paintTxt);
     }
+
+    private Matrix scaleMatrix;
 
     private void calculateColumns() {
         linePoints.clear(); // 为了在增删行列的时候去掉上一次的内容,
@@ -554,7 +593,6 @@ public class TableView extends View {
     private float scaleFactorY(MotionEvent event) {
         return (event.getRawY() - getTop() - ScreenUtils.getStatusBarHeight(getContext())) / originalCenterY - 1f;
     }
-
 
 }
 

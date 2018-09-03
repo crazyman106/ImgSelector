@@ -2,22 +2,29 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rootview"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="54dp">
+    android:orientation="vertical"
+    android:layout_height="match_parent">
 
 
     <com.example.cusexcel.view.TableView
         android:id="@+id/table"
         android:layout_width="360dp"
         android:layout_height="200dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:visibility="visible" />
+
+
+    <com.example.cusexcel.view.TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
 
 
     <LinearLayout
         android:id="@+id/row"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-
         android:layout_marginLeft="36dp"
         android:layout_marginTop="218dp">
 

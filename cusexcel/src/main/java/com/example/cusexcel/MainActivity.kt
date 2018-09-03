@@ -102,33 +102,29 @@ class MainActivity : AppCompatActivity() {
 
         // 双击,edittext获取焦点,弹出软键盘,录入文本内容
         tableview.setOnDoubleClickListener {
-            InputDialog(this@MainActivity).builder().show()
-          /*  input.visibility = View.VISIBLE
-            Toast.makeText(this@MainActivity,"双击",Toast.LENGTH_LONG).show();*/
-          /*  input.setFocusable(true)
+            input.visibility = View.VISIBLE
+            input.setFocusable(true)
             input.isFocusableInTouchMode = true;
-            input.requestFocus()*/
-          /*  if (imm == null) {
+            input.requestFocus()
+            if (imm == null) {
                 imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             }
-            imm!!.showSoftInput(input, 0)*/
-//            curClickPosition = it;
-
-
+            imm!!.showSoftInput(input, 0)
+            curClickPosition = it;
         }
 
         // 把Edittext的imeOptions属性设置成actionDone,对应EditorInfo.IME_ACTION_DONE
         // Edittext的右下角action点击监听
-      /*  input.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+        input.setOnEditorActionListener(object : TextView.OnEditorActionListener {
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 var handled = false
                 if (actionId === EditorInfo.IME_ACTION_DONE) {
                     handled = true
-                    *//*隐藏软键盘*//*
-                  *//*  val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    // 隐藏软键盘
+                    val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     if (inputMethodManager.isActive) {
                         inputMethodManager.hideSoftInputFromWindow(this@MainActivity.currentFocus!!.windowToken, 0)
-                    }*//*
+                    }
                     // 根据我们点击的表格位置来输入内容.
                     if (curClickPosition != -1) {
                         tableview.setContent(curClickPosition!!, input.text.toString());
@@ -141,7 +137,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 return handled
             }
-        })*/
+        })
 
         // 行+1
         row_add.setOnClickListener { tableview.addRow() }
