@@ -24,7 +24,6 @@ import java.util.List;
 
 /**
  * Description:表格控件
- * Blog:https://blog.csdn.net/u010870167
  * Creator:fengzi
  */
 public class TableView extends View {
