@@ -8,8 +8,8 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ImageSpan
-import android.util.Log
 import android.view.View
+import android.widget.ScrollView
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -23,23 +23,30 @@ class MainActivity : AppCompatActivity() {
         var imageSpan: ImageSpan = ImageSpan(this@MainActivity, Utils.getThumbBitmap(BitmapFactory.decodeResource(resources, R.mipmap.ic_my_go_with), input.textSize.toFloat(), input.textSize.toFloat()))
         val ss = SpannableString(str)
 
-        ss.setSpan(imageSpan, 0, 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+        ss.setSpan(imageSpan, 0, 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
         input.setText(ss)
 
         txt1.text = input.text;
         txt2.text = input.text;
 
+        input_scroll.post(object : Runnable {
+            override fun run() {
+                input_scroll.fullScroll(ScrollView.FOCUS_RIGHT)
+                portrait.fullScroll(ScrollView.FOCUS_DOWN)
+            }
+        })
 
         switch_mode.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 // 纵向
-                landscape.visibility = View.VISIBLE
-                portrait.visibility = View.GONE
+                portrait.visibility = View.VISIBLE
+                txt2.visibility = View.GONE
             } else {
                 // 横向
-                portrait.visibility = View.VISIBLE
-                landscape.visibility = View.GONE
+                portrait.visibility = View.GONE
+                txt2.visibility = View.VISIBLE
             }
+            portrait.fullScroll(ScrollView.FOCUS_DOWN)
         }
 
         input.addTextChangedListener(object : TextWatcher {
@@ -50,7 +57,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                Log.e("onTextChanged", s.toString() + ";" + start + "--" + before + "--" + count)
+                txt1.text = s;
+                txt2.text = s;
             }
         })
     }
