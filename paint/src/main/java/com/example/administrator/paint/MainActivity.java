@@ -5,12 +5,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView tv;
     CustomTextView textView;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

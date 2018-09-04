@@ -10,7 +10,6 @@ import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -78,7 +77,7 @@ public class TableView extends View {
     // 虚线效果实现类
     DashPathEffect dashPathEffect;
 
-
+    private Matrix matrix;
     public TableView(Context context) {
         super(context);
         init(null);
@@ -118,12 +117,10 @@ public class TableView extends View {
         controlBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_move);
         padding = Math.max(delBitmap.getWidth(), controlBitmap.getWidth()) / 2;
         screenWidth = ScreenUtils.getWidth(getContext());
-        scaleMatrix = new Matrix();
+        matrix = new Matrix();
     }
 
     private int count = 0;//点击次数
-    private long firstClick = 0;//第一次点击时间
-    private long secondClick = 0;//第二次点击时间
 
     private long lastClickTime = 0;
     /**
@@ -134,22 +131,20 @@ public class TableView extends View {
 
     private float downX, downY;
     private boolean isCanTranslate = false;
-
-    private float lastDownX, lastDownY;
-
+ private float lastDownX,lastDownY;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                lastDownX = event.getRawX();
+                lastDownY = event.getRawY();
                 Log.e("scaleFactor", event.getRawY() + "");
                 downX = event.getX();
                 downY = event.getY();
                 // 每次点击的时候先判断手指是不是在删除图表和缩放图表边界内,是的话,直接执行删除和缩放操作
                 if (rectControlIcon.contains((int) event.getX(), (int) event.getY())) {
                     count = 0;
-                    firstClick = 0;
-                    secondClick = 0;
                     lastClickPosition = -1;
                     isCanScale = true;
                     break;
@@ -157,7 +152,6 @@ public class TableView extends View {
                 // 删除操作
                 if (rectDelIcon.contains((int) event.getX(), (int) event.getY())) {
                     count = 0;
-                    firstClick = 0;
                     lastClickPosition = -1;
                     if (delClickListener != null) {
                         delClickListener.onDelView();
@@ -178,7 +172,6 @@ public class TableView extends View {
                     }
                 } else if (count == 2) {
                     Log.e("onClick", "onCLick2");
-
                     long offsetTime = System.currentTimeMillis() - lastClickTime;
                     if (offsetTime < totalTime) {
                         count = 0;
@@ -215,8 +208,6 @@ public class TableView extends View {
                     isCanTranslate = true;
                     count = 0;
                 }
-                lastDownX = event.getRawX();
-                lastDownY = event.getRawY();
                 break;
             case MotionEvent.ACTION_MOVE:
                 lastClickPosition = -1;
@@ -225,12 +216,15 @@ public class TableView extends View {
                 if (isCanScale) { // 执行缩放操作
                    /* setScaleX(scaleFactorX(event));
                     setScaleY(scaleFactorY(event));*/
+
                     final float xDistance = event.getRawX() - lastDownX;
                     final float yDistance = event.getRawY() - lastDownY;
-                    scaleX += xDistance / getWidth();
-                    scaleY += yDistance / getHeight();
-                    setScaleX(scaleX);
-                    setScaleY(scaleY);
+                    scaleX = xDistance / getWidth();
+                    scaleY = yDistance / getHeight();
+//                    setScaleX(scaleX);
+//                    setScaleY(scaleY);
+                    matrix.postScale(scaleFactorX(event),scaleFactorY(event));
+                    invalidate();
                     lastDownX = event.getRawX();
                     lastDownY = event.getRawY();
                 }
@@ -293,15 +287,23 @@ public class TableView extends View {
         Log.e("onSizeChanged", originalCenterX + "--" + originalCenterY);
     }
 
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);//对表格和文本进行绘制
         setPadding(padding, padding, padding, padding);
         drawBitmap(canvas);// 绘制bitmap
         calculateColumns();// 计算表格内部行列线段的坐标
-        drawFramework(canvas);//绘制表格(外边框和内部线段)
         calculateRects(); // 统计全部单元格的边界
-        drawContent(canvas);// 绘制文本
+       /*   drawFramework(canvas);//绘制表格(外边框和内部线段)
+        drawContent(canvas);// 绘制文本*/
+
+        Bitmap bitmap = Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
+        Canvas canvas1 = new Canvas(bitmap);
+        drawFramework(canvas1);//绘制表格(外边框和内部线段)
+        drawContent(canvas1);// 绘制文本
+        canvas.drawBitmap(bitmap,matrix,paintTxt);
+//        canvas.drawBitmap(bitmap,padding,padding,paintTxt);
     }
 
     private void drawBitmap(Canvas canvas) {
@@ -309,7 +311,6 @@ public class TableView extends View {
         canvas.drawBitmap(controlBitmap, getWidth() - controlBitmap.getWidth(), getHeight() - controlBitmap.getHeight(), paintTxt);
     }
 
-    private Matrix scaleMatrix;
 
     private void calculateColumns() {
         linePoints.clear(); // 为了在增删行列的时候去掉上一次的内容,

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,7 +28,8 @@
 
     <com.example.administrator.paint.EmbossMaskFilterView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
     <com.example.administrator.paint.JoinCapTestView
         android:layout_width="wrap_content"
@@ -46,10 +47,15 @@
         android:layout_height="match_parent"
         android:background="#22ff0000"
         android:text="fasdffasdfdasfasdfdasda"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <com.example.administrator.mPaint.PathEffectView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone" />
-</android.support.constraint.ConstraintLayout>
+    <com.example.administrator.paint.DragView
+        android:layout_width="50dp"
+        android:onClick="click"
+        android:layout_height="50dp"
+        android:src="@mipmap/ic_launcher"/>
+</RelativeLayout>
