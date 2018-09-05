@@ -1,39 +1,49 @@
 package com.youdianpinwei.textimg
 
-import android.graphics.BitmapFactory
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ImageSpan
+import android.util.Log
 import android.view.View
 import android.widget.ScrollView
+import android.widget.SeekBar
+import com.youdianpinwei.textimg.Utils.baseSize
+import com.youdianpinwei.textimg.Utils.getImageBitmap
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.regex.Pattern
 
 
 class MainActivity : AppCompatActivity() {
-    val str: String = "天安门，坐落在中华人民共和国首都北京市的中心、故宫的南端，与天安门广场以及人民英雄纪念碑、毛主席纪念堂、人民大会堂、中国国家博物馆隔长安街相望，占地面积4800平方米，以杰出的建筑艺术和特殊的政治地位为世人所瞩目。天安门是明清两代北京皇城的正门，始建于明朝永乐十五年（1417年），最初名“承天门”，寓“承天启运、受命于天”之意。设计者为明代御用建筑匠师蒯祥。清朝顺治八年（1651年）更名为天安门。由城台和城楼两部分组成，有汉白玉石的须弥座，总高34.7米。天安门城楼长66米、宽37米。城台下有券门五阙，中间的券门最大，位于北京皇城中轴线上，过去只有皇帝才可以由此出入。正中门洞上方悬挂着毛泽东画像，两边分别是“中华人民共和国万岁”和“世界人民大团结万岁”的大幅标语。"
+    private val PHOTO_REQUEST_GALLERY = 105
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var imageSpan: ImageSpan = ImageSpan(this@MainActivity, Utils.getThumbBitmap(BitmapFactory.decodeResource(resources, R.mipmap.ic_my_go_with), input.textSize.toFloat(), input.textSize.toFloat()))
-        val ss = SpannableString(str)
-
-        ss.setSpan(imageSpan, 0, 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-        input.setText(ss)
-
-        txt1.text = input.text;
-        txt2.text = input.text;
-
+        txt1.textSize = Utils.baseSize
+        txt2.textSize = Utils.baseSize
+        input.textSize = Utils.baseSize
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // 申请权限
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
+        }
         input_scroll.post(object : Runnable {
             override fun run() {
                 input_scroll.fullScroll(ScrollView.FOCUS_RIGHT)
                 portrait.fullScroll(ScrollView.FOCUS_DOWN)
             }
+
         })
 
         switch_mode.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -48,18 +58,108 @@ class MainActivity : AppCompatActivity() {
             }
             portrait.fullScroll(ScrollView.FOCUS_DOWN)
         }
+        //.+
 
         input.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
+                Log.e("afterText", s.toString());
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                Log.e("beforeTextChanged", s.toString());
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                txt1.text = s;
+                Log.e("onTextChanged", s.toString());
+                if (!txt1.text.equals(s.toString()))
+                    txt1.text = s;
                 txt2.text = s;
             }
         })
+
+        selectimg.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                // 申请权限
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
+            } else {
+                val intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                startActivityForResult(intent, PHOTO_REQUEST_GALLERY)
+            }
+        }
+
+        seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                txt1.textSize = baseSize + progress.toFloat()
+                txt2.textSize = baseSize + progress.toFloat()
+                input.textSize = baseSize + progress.toFloat()
+                Log.e("img_size2", progress.toString())
+                var inputMsg = input.editableText.toString()
+                val sinaPatten = Pattern.compile("<img=[^>]*\\>", Pattern.CASE_INSENSITIVE)
+                val matcher = sinaPatten.matcher(inputMsg)
+                while (matcher.find()) {
+                    var uri = matcher.group()
+                    val bitmap = getImageBitmap(this@MainActivity, Uri.parse(uri.substring(5, uri.length - 2)))?.let {
+                        Utils.getThumbBitmap(it, input.textSize.toFloat(), input.textSize.toFloat())
+                    }
+                    val imageSpan = ImageSpan(this@MainActivity, bitmap)
+                    //创建一个SpannableString对象，以便插入用ImageSpan对象封装的图像
+                    val spannableString = SpannableString("<img=${uri.substring(5, uri.length - 2)}/>")
+                    //  用ImageSpan对象替换face
+                    spannableString.setSpan(imageSpan, 0, "<img=${uri.substring(5, uri.length - 2)}/>".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    //将选择的图片追加到EditText中光标所在位置
+                    val edit_text = input.getEditableText()
+                    edit_text.replace(/*0, uri.length, */ edit_text.indexOf(uri), edit_text.indexOf(uri) + uri.length, spannableString)
+
+                    txt1.setText(edit_text)
+                    txt2.setText(edit_text)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PHOTO_REQUEST_GALLERY) {
+            data?.let {
+                val bitmap = getImageBitmap(this, data.data)?.let {
+                    Utils.getThumbBitmap(it, input.textSize.toFloat(), input.textSize.toFloat())
+                }
+                Log.e("img_size1", input.textSize.toString())
+                val imageSpan = ImageSpan(this@MainActivity, bitmap)
+                //创建一个SpannableString对象，以便插入用ImageSpan对象封装的图像
+                val spannableString = SpannableString("<img=${data.data}/>")
+                //  用ImageSpan对象替换face
+                spannableString.setSpan(imageSpan, 0, "<img=${data.data}/>".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                //将选择的图片追加到EditText中光标所在位置
+                val index = input.getSelectionStart() //获取光标所在位置
+                val edit_text = input.getEditableText()
+                if (index < 0 || index >= edit_text.length) {
+                    edit_text.append(spannableString)
+                } else {
+                    edit_text.insert(index, spannableString)
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 0) {
+            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 获得授权
+                showToast("获取SDCard读写权限成功")
+            } else {
+                // 被禁止授权
+                showToast("获取SDCard读写权限失败")
+            }
+        }
+    }
+
 }

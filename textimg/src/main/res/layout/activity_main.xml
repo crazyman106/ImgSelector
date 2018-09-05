@@ -10,15 +10,14 @@
     <ScrollView
         android:id="@+id/portrait"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="160dp"
         android:scrollbars="none"
         android:visibility="gone">
 
         <TextView
             android:id="@+id/txt1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15sp" />
+            android:layout_height="wrap_content" />
     </ScrollView>
 
     <HorizontalScrollView
@@ -34,17 +33,15 @@
 
             <TextView
                 android:id="@+id/txt2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <EditText
                 android:id="@+id/input"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginTop="100dp"
-                android:singleLine="true"
-                android:textSize="15sp" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:singleLine="true" />
 
         </LinearLayout>
     </HorizontalScrollView>
@@ -72,7 +69,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="纵向" />
-
-
     </LinearLayout>
+
+    <Button
+        android:id="@+id/selectimg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="selectImg" />
+
+    <android.support.v7.widget.AppCompatSeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:max="40" />
 </LinearLayout>
