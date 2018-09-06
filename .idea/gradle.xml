@@ -9,10 +9,13 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/authdemo" />
             <option value="$PROJECT_DIR$/canvas" />
             <option value="$PROJECT_DIR$/colorfilter" />
             <option value="$PROJECT_DIR$/cusexcel" />
+            <option value="$PROJECT_DIR$/customview" />
             <option value="$PROJECT_DIR$/footmark" />
+            <option value="$PROJECT_DIR$/logindemo" />
             <option value="$PROJECT_DIR$/mvp" />
             <option value="$PROJECT_DIR$/myapplication" />
             <option value="$PROJECT_DIR$/paint" />

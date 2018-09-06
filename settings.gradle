@@ -1,1 +1,1 @@
-include ':app', ':tablayout', ':footmark', ':recyclerview', ':rxtext', ':porterduffxfermode', ':porterduffxfermode', ':colorfilter', ':mvp', ':paint', ':paint', ':webviewtest', ':canvas', ':myapplication', ':cusexcel', ':rxjava', ':textimg'
+include ':app', ':tablayout', ':footmark', ':recyclerview', ':rxtext', ':porterduffxfermode', ':porterduffxfermode', ':colorfilter', ':mvp', ':paint', ':paint', ':webviewtest', ':canvas', ':myapplication', ':cusexcel', ':rxjava', ':textimg', ':customview', ':logindemo', ':authdemo'
