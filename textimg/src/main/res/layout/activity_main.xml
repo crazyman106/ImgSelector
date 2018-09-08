@@ -7,18 +7,19 @@
     tools:context="com.youdianpinwei.textimg.MainActivity">
 
 
-    <ScrollView
-        android:id="@+id/portrait"
-        android:layout_width="match_parent"
-        android:layout_height="160dp"
+    <TextView
+        android:id="@+id/txt1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:ems="1"
+        android:fadeScrollbars="false"
+        android:gravity="center_horizontal"
+        android:maxHeight="200dp"
+        android:minWidth="25sp"
         android:scrollbars="none"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/txt1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </ScrollView>
+        android:text="我是谁哈哈"
+        android:visibility="gone" />
 
     <HorizontalScrollView
         android:id="@+id/input_scroll"
@@ -36,15 +37,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <EditText
-                android:id="@+id/input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:singleLine="true" />
 
         </LinearLayout>
     </HorizontalScrollView>
+
+    <EditText
+        android:id="@+id/input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@null"
+        android:maxLines="8"
+        android:minHeight="30dp"
+        android:minWidth="50dp"
+        android:text="" />
 
     <LinearLayout
         android:layout_width="match_parent"

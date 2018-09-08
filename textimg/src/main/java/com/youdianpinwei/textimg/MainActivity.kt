@@ -3,7 +3,6 @@ package com.youdianpinwei.textimg
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
@@ -13,12 +12,15 @@ import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextWatcher
+import android.text.method.ScrollingMovementMethod
 import android.text.style.ImageSpan
 import android.util.Log
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.ScrollView
 import android.widget.SeekBar
 import com.youdianpinwei.textimg.Utils.baseSize
+import com.youdianpinwei.textimg.Utils.getBitmapFromRes
 import com.youdianpinwei.textimg.Utils.getImageBitmap
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.regex.Pattern
@@ -26,6 +28,16 @@ import java.util.regex.Pattern
 
 class MainActivity : AppCompatActivity() {
     private val PHOTO_REQUEST_GALLERY = 105
+    inline fun <T : View> T.afterMeasured(crossinline f: T.() -> Unit) {
+        viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (measuredWidth > 0 && measuredHeight > 0) {
+                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    f()
+                }
+            }
+        })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,22 +53,24 @@ class MainActivity : AppCompatActivity() {
         input_scroll.post(object : Runnable {
             override fun run() {
                 input_scroll.fullScroll(ScrollView.FOCUS_RIGHT)
-                portrait.fullScroll(ScrollView.FOCUS_DOWN)
+//                portrait.fullScroll(ScrollView.FOCUS_DOWN)
             }
 
         })
-
+        txt1.setMovementMethod(ScrollingMovementMethod.getInstance())
         switch_mode.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 // 纵向
-                portrait.visibility = View.VISIBLE
+//                portrait.visibility = View.VISIBLE
+                txt1.visibility = View.VISIBLE
                 txt2.visibility = View.GONE
             } else {
                 // 横向
-                portrait.visibility = View.GONE
+//                portrait.visibility = View.GONE
+                txt1.visibility = View.GONE
                 txt2.visibility = View.VISIBLE
             }
-            portrait.fullScroll(ScrollView.FOCUS_DOWN)
+//            portrait.fullScroll(ScrollView.FOCUS_DOWN)
         }
         //.+
 
@@ -77,13 +91,19 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        input.isFocusable = true
+        input.isFocusableInTouchMode = true
+        input
+        // 获取光标
+        input.requestFocus()
+
         selectimg.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                // 申请权限
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
-            } else {
-                val intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                 // 申请权限
+                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 0)
+             } else {
+                 val intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                 intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image")
                 startActivityForResult(intent, PHOTO_REQUEST_GALLERY)
             }
         }
@@ -99,12 +119,18 @@ class MainActivity : AppCompatActivity() {
                 val matcher = sinaPatten.matcher(inputMsg)
                 while (matcher.find()) {
                     var uri = matcher.group()
-                    val bitmap = getImageBitmap(this@MainActivity, Uri.parse(uri.substring(5, uri.length - 2)))?.let {
+                    /*val bitmap = getImageBitmap(this@MainActivity, Uri.parse(uri.substring(5, uri.length - 2)))?.let {
+                        Utils.getThumbBitmap(it, input.textSize.toFloat(), input.textSize.toFloat())
+                    }*/
+                    Log.e("resource_size", input.textSize.toString());
+                    Log.e("resourceid", "url" + uri.substring(5, uri.length - 2).toInt())
+                    val bitmap = getBitmapFromRes(resources, uri.substring(5, uri.length - 2).toInt())?.let {
                         Utils.getThumbBitmap(it, input.textSize.toFloat(), input.textSize.toFloat())
                     }
                     val imageSpan = ImageSpan(this@MainActivity, bitmap)
                     //创建一个SpannableString对象，以便插入用ImageSpan对象封装的图像
                     val spannableString = SpannableString("<img=${uri.substring(5, uri.length - 2)}/>")
+
                     //  用ImageSpan对象替换face
                     spannableString.setSpan(imageSpan, 0, "<img=${uri.substring(5, uri.length - 2)}/>".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     //将选择的图片追加到EditText中光标所在位置
@@ -122,6 +148,27 @@ class MainActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
             }
         })
+        addBitmap2Txt(R.mipmap.ic_my_go_with)
+    }
+
+    private fun addBitmap2Txt(resID: Int) {
+        val bitmap = getBitmapFromRes(resources, resID)?.let {
+            Utils.getThumbBitmap(it, input.textSize.toFloat(), input.textSize.toFloat())
+        }
+        Log.e("img_size1", input.textSize.toString())
+        val imageSpan = ImageSpan(this@MainActivity, bitmap)
+        //创建一个SpannableString对象，以便插入用ImageSpan对象封装的图像
+        val spannableString = SpannableString("<img=${resID}/>")
+        //  用ImageSpan对象替换face
+        spannableString.setSpan(imageSpan, 0, "<img=${resID}/>".length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        //将选择的图片追加到EditText中光标所在位置
+        val index = input.getSelectionStart() //获取光标所在位置
+        val edit_text = input.getEditableText()
+        if (index < 0 || index >= edit_text.length) {
+            edit_text.append(spannableString)
+        } else {
+            edit_text.insert(index, spannableString)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

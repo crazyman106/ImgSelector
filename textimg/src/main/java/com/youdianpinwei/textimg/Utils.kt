@@ -1,9 +1,9 @@
 package com.youdianpinwei.textimg
 
 import android.content.Context
-import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.provider.MediaStore
@@ -63,7 +63,10 @@ object Utils {
         } catch (e: Exception) {
             return null
         }
-
         return bitmap
+    }
+
+    fun getBitmapFromRes(resources: Resources, resId: Int): Bitmap {
+        return BitmapFactory.decodeResource(resources, resId)
     }
 }
